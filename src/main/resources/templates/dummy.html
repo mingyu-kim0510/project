@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>hello world</h1>
+<a href="/login">login page</a>
+<h1 th:text="${test}"></h1>
+<button id="fetchBtn">fetch btn</button>
+</body>
+<script>
+    const fetchBtn = document.getElementById('fetchBtn')
+
+    fetchBtn.addEventListener('click', async () => {
+        const response = await fetch('/api/user/login', {
+            method:'post',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({
+                userId: 'userId Test',
+                userPw: 'userPw Test'
+            })
+        });
+        const result = await response.json();
+        console.log(result)
+    });
+</script>
+</html>
