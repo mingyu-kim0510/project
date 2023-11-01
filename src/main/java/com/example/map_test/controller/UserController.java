@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -21,6 +23,7 @@ public class UserController {
     private final UserService userService;
     private final StoreService storeService;
 
+    // 로그인
     @PostMapping("/login")
     public void login(UserDto dto){
 
@@ -30,11 +33,19 @@ public class UserController {
         }
     }
 
+    // 회원가입
+    @PostMapping("/signup")
+    public void register(UserDto dto, HttpServletResponse response) throws IOException {
+        System.out.println(dto);
+        userService.register(dto);
+        response.sendRedirect("/login");
+    }
+
+    // 검색 후 리스트 출력
     @PostMapping("/api/store/list")
     public @ResponseBody List<StoreResDto> getStoreList(@RequestBody StoreReqDto storeReqDto) {
-        var temp = storeReqDto.getSearchVal();
-        var temp2 = storeService.findByStoreNameContaining(temp);
-        System.out.println(temp2);
-        return temp2;
+        return storeService.findByStoreNameContaining(storeReqDto.getSearchVal());
     }
+
+
 }

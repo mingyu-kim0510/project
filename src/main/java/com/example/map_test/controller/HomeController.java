@@ -20,7 +20,6 @@ public class HomeController {
 
     @GetMapping("/main")
     public void mapMain() {
-
     }
 
     @GetMapping("/login")
@@ -32,10 +31,5 @@ public class HomeController {
     }
 
 
-    @PostMapping("/signup")
-    public String register(UserDto dto){
-        System.out.println(dto);
-        userService.register(dto);
-        return "redirect:/login";
-    }
+
 }
