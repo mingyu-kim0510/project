@@ -14,7 +14,7 @@ public interface UserService {
 
     UserDto login(UserDto dto);
 
-    void register(UserDto dto);
+    String register(UserDto dto);
 
     default UserEntity dtoToEntity(UserDto dto){
         UserEntity entity = UserEntity.builder()
@@ -25,8 +25,5 @@ public interface UserService {
         return entity;
     }
 
-
-    //    UserDto findByUserId(String userId);
-    List<UserEntity> findAll();
 
 }

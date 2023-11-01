@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,12 +26,17 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public void login(UserDto dto){
-
+    public void login(UserDto dto) {
         var result = userService.login(dto);
         if (result == null) {
             System.out.println("로그인 실패");
         }
+    }
+
+    // 마이페이지
+    @PostMapping("/mypage")
+    public String userId(HttpSession session) {
+        return (String) session.getAttribute("user");
     }
 
     // 회원가입

@@ -17,10 +17,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Override
-    public List<UserEntity> findAll() {
-        return userRepository.findAll();
-    }
 
     @Override
     public UserDto login(UserDto dto) {
@@ -36,8 +32,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override public void register(UserDto dto){
-        var tmp = dtoToEntity(dto);
-        userRepository.save(tmp);
+    @Override
+    public String register(UserDto dto){
+        if (userRepository.findByUserId(dto.getUserId()).isPresent()) {
+            return null;
+        }
+        return userRepository.save(dtoToEntity(dto)).getUserId();
     }
 }

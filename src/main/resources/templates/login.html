@@ -5,10 +5,37 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post" action="/login">
-  <input type="text" name="userId" placeholder="아이디를 입력하세요">
-  <input type="password" name="userPw" placeholder="비밀번호를 입력하세요"/>
-  <button type="submit">submit</button>
-</form>
+<div>
+    <input type="text" name="userId" id="userId" placeholder="아이디를 입력하세요" />
+    <input type="password" name="userPw" id="userPw" placeholder="비밀번호를 입력하세요" />
+    <button type="button" id="sendBtn">submit</button>
+</div>
 </body>
+
+<script>
+    let userId = document.getElementById('userId');
+    let userPw = document.getElementById('userPw');
+    const Btn = document.getElementById('sendBtn');
+    Btn.addEventListener('click',
+        async () => {
+            const res = await fetch('/login', {
+                method: 'post',
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                body : JSON.stringify({
+                    'userId': userId.value,
+                    'userPw': userPw.value
+                })
+            })
+            const result = await res.text();
+            console.log(result);
+            if (result != '') {
+                location.href = '/main';
+            } else {
+                alert ('아이디 혹은 비밀번호를 다시 확인해주세요')
+            }
+        })
+
+</script>
 </html>

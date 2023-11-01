@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=452c7ddc8ed8a9dd0f1f2a182fe1303f"></script>
 <head>
     <meta charset="UTF-8" />
@@ -16,21 +16,39 @@
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"
     ></script>
+    <style>
+        .custom_zoomcontrol {
+            position: absolute;
+            top: 81.5%;
+            left: 50%;
+            overflow: hidden;
+            z-index: 1;
+            transform: translate(-50%, 0%);
+        }
+    </style>
 </head>
 <body>
 <!-- 검색 -->
 <div class="container container-fluid mt-3 mb-3">
     <div class="row g-2">
-        <div class="col col-8">
-            <input type="text" id="searchVal" class="form-control" />
+        <div class="col col-10">
+            <input type="text" id="searchVal" onkeyup="if(window.event.keyCode==13){ this.blur()}" class="form-control"/>
         </div>
-        <div class="col col-4">
-            <button id="fetchBtn" type="button" class="w-100 btn btn-primary mb-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">검색</button>
+        <div class="col col-md-auto">
+            <a id="fetchBtn" type="button" class="w-100 text-center" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <img style="width: 2.3rem" src="/img/search.png"/>
+            </a>
+<!--            <button id="fetchBtn" type="button" class="w-100 btn btn-primary ">검색</button>-->
         </div>
     </div>
-    <div id="map" style="width:100%;height:800px;"></div>
+
 </div>
 <!-- 지도 -->
+<div id="map" style="position:relative; overflow:hidden; width:100%;height:690px;"></div>
+
+<button type="button" class="btn btn-light  btn-sm custom_zoomcontrol" style="border: 1px solid gray; border-radius: 2rem" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+    <img src="/img/list.png" style="width: 2rem"><a style="font-weight:bold"> 목록 보기&nbsp;</a>
+</button>
 
 
 <!-- 검색결과 (오프캔버스 하단) -->
@@ -41,18 +59,54 @@
     </div>
     <div class="offcanvas-body">
         <div id="innerList">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+            <div>검색어를 입력해주세요</div>
             <!-- 오프캔버스 내용 -->
         </div>
     </div>
 </div>
+<nav class="navbar fixed-bottom bg-body-tertiary">
+    <div class="container-fluid" style="max-width:350px">
+        <a class="navbar-brand" href="/login"><img src="/img/home.png" style="width: 3rem"></a>
+        <a class="navbar-brand" href="/login"><img src="/img/map.png" style="width: 3rem"></a>
+        <a class="navbar-brand" href="/login"><img src="/img/mypage.png" style="width: 3rem"></a>
+    </div>
+</nav>
 </body>
 <script>
-    const fetchBtn = document.getElementById('fetchBtn');
-    const searchVal = document.getElementById('searchVal');
-    fetchBtn.addEventListener('click', async () => {
+    const mapContainer = document.getElementById('map') // 지도를 표시할 div
+    const fetchBtn = document.getElementById('fetchBtn');  // 검색 버튼
+    const searchVal = document.getElementById('searchVal');  // 검색값
+    const storeList = document.getElementById('innerList');  // 검색결과 내용 리스트
+    // 지도 초기화
+    function mapInit() {
+        mapContainer.innerHTML = ``;
+        var mapOption = {
+            center: new kakao.maps.LatLng(37.5548420, 126.9717319), // 지도의 중심좌표
+            level: 5 // 지도의 확대 레벨
+        };
+        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    }
+    window.onload = mapInit;
+
+    function spinner() {
+        storeList.innerHTML = `
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden" id="loadResult">Loading...</span>
+            </div>`
+    }
+
+
+
+    searchVal.addEventListener('blur', async function search () {
+        // 검색기능 수행 전 스피너 띄우기
+        spinner();
+
+        // 검색값 공백 확인하기
+        if (searchVal.value === '') {
+            mapInit();
+            storeList.innerHTML = `<div>검색어를 입력해주세요</div>`
+            return
+        }
         // request
         const response = await fetch('/api/store/list', {
             method:'post',
@@ -63,77 +117,112 @@
                 searchVal : searchVal.value
             })
         });
-        const result = await response.json();
-
-        // 지도 내용 초기화
-        var mapContainer = document.getElementById('map') // 지도를 표시할 div
-        mapContainer.innerHTML = '';
-        //// 핀 위치, 중심좌표 지정
-        var positions = [
-        ];
-        let latMean = 0;
-        let lngMean = 0;
-        result.forEach(item => {
-            positions.push({
-                title: item.storeName,
-                latlng: new kakao.maps.LatLng(parseFloat(item.storeLon), parseFloat(item.storeLat))
+        var result = await response.json();
+        // 결과 값 공백 확인하기
+        if (result.length !== 0) {
+            // 지도 내용 초기화
+            mapContainer.innerHTML = '';
+            // 핀 위치, 중심좌표 지정
+            let positions = [];
+            let latList = []
+            let lngList = []
+            result.forEach(item => {
+                positions.push({
+                    title: item.storeName,
+                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon))
+                })
+                latList.push(parseFloat(item.storeLat));
+                lngList.push(parseFloat(item.storeLon));
             })
-            console.log(item.storeLon)
-            latMean += parseFloat(item.storeLon);
-            lngMean += parseFloat(item.storeLat);
-        })
-        latMean = latMean /positions.length;
-        lngMean = lngMean /positions.length;
 
-        console.log(latMean)
-        console.log(lngMean)
+            // 중심 좌표값 얻어오기
+            const latMid = Math.max(...latList) - (Math.max(...latList) - Math.min(...latList)) / 2
+            const lngMid = Math.max(...lngList) - (Math.max(...lngList) - Math.min(...lngList)) / 2
+            // 지도 확대레벨 계산하기
+            let latDist = Math.max(Math.max(...latList) - Math.min(...latList))
+            let lngDist = Math.max(Math.max(...lngList) - Math.min(...lngList))
+            // 위도 경도 -> 거리 환산
+            latDist *= 88740;
+            lngDist *= 88740;
+            // 화면비율에 맞춰 최종 거리값 산출
+            const distance = Math.max(latDist / 4, lngDist / 8.6);
+            // 확대 레벨 값
+            let distLevel = 0;
 
-        var mapOption = {
-            center: new kakao.maps.LatLng(latMean, lngMean), // 지도의 중심좌표
-            level: 7 // 지도의 확대 레벨
-        };
+            // ui에 맞춰서 지도 확대 되도록 세팅
+            if (distance > 4000) {
+                distLevel = 10;
+            } else if (distance > 2000) {
+                distLevel = 9;
+            } else if (distance > 1000) {
+                distLevel = 8;
+            } else if (distance > 500) {
+                distLevel = 7;
+            } else if (distance > 250) {
+                distLevel = 6;
+            } else if (distance > 100) {
+                distLevel = 5;
+            } else if (distance > 50) {
+                distLevel = 4;
+            } else if (distance > 30) {
+                distLevel = 3;
+            } else if (distance > 20) {
+                distLevel = 2;
+            } else {
+                distLevel = 1;
+            }
 
-        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+            var mapOption = {
+                center: new kakao.maps.LatLng(latMid, lngMid), // 지도의 중심좌표
+                level: distLevel // 지도의 확대 레벨
+            };
 
+            // 지도 생성
+            var map = new kakao.maps.Map(mapContainer, mapOption);
 
+            // 마커 이미지 주소
+            var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
 
-        // 마커 이미지의 이미지 주소입니다
-        var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+            for (var i = 0; i < positions.length; i ++) {
 
-        for (var i = 0; i < positions.length; i ++) {
+                // 마커 이미지 크기
+                var imageSize = new kakao.maps.Size(24, 35);
 
-            // 마커 이미지의 이미지 크기 입니다
-            var imageSize = new kakao.maps.Size(24, 35);
+                // 마커 이미지 생성
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
 
-            // 마커 이미지를 생성합니다
-            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                // 마커를 생성
+                var marker = new kakao.maps.Marker({
+                    map: map, // 마커를 표시할 지도
+                    position: positions[i].latlng, // 마커를 표시할 위치
+                    title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+                    image : markerImage // 마커 이미지
+                });
+            }
 
-            // 마커를 생성합니다
-            var marker = new kakao.maps.Marker({
-                map: map, // 마커를 표시할 지도
-                position: positions[i].latlng, // 마커를 표시할 위치
-                title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-                image : markerImage // 마커 이미지
-            });
+            // 검색결과 출력
+            storeList.innerHTML = ''
+            result.forEach(item => {
+                storeList.innerHTML += `
+                <div class="card mb-3" data-no="${item.storeIdx}">
+                    <div class="card-header">
+                        ${item.storeName}
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p style="font-size:1rem">${item.storeNewAddr}</p>
+                        </blockquote>
+                    </div>
+                </div>
+                `
+            })
         }
-
-        // 검색결과 출력
-        const storeList = document.getElementById('innerList');
-        storeList.innerHTML = ''
-        result.forEach(item => {
-            storeList.innerHTML += `
-            <div class="card mb-3" data-no="${item.storeIdx}">
-                <div class="card-header">
-                    ${item.storeName}
-                </div>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p style="font-size:1rem">${item.storeNewAddr}</p>
-                    </blockquote>
-                </div>
-            </div>
-            `
-        })
+        // 검색결과 없음
+        else {
+            // 지도 초기화
+            mapInit();
+            storeList.innerHTML = `<div>검색결과가 없습니다.</div>`
+        }
     });
 </script>
 </html>
