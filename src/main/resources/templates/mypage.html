@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div class="d-flex">
+  <a class="btn-primary m-1" href="/login" >로그인</a>
+  <a class="btn-primary m-1" href="/signup" >회원가입</a>
+  <a class="btn-primary m-1" href="/logout" >로그아웃</a>
+</div>
+<div id="userName"></div>
+
+</body>
+<script>
+  window.onload = getUser();
+  async function getUser () {
+    const resp = await fetch ('/mypage', {
+      method: 'post'
+    })
+    const result = await resp.text();
+    console.log(result);
+
+    const username = document.getElementById('userName');
+    username.innerHTML = result;
+  }
+</script>
+</html>
