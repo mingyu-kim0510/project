@@ -5,6 +5,9 @@ import com.example.map_test.dto.UserDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +19,7 @@ import javax.persistence.*;
 public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_idx")
     private Long userIdx;
 
     @Column(name = "user_id")
@@ -23,6 +27,16 @@ public class UserEntity extends BaseEntity {
 
     @Column(name = "user_pw")
     private String userPw;
+
+    @Column(name = "regdate")
+    private LocalDateTime regDate;
+
+    @Column(name = "moddate")
+    private LocalDateTime modDate;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<LikeEntity> likeEntityList = new ArrayList<>();
 
     public UserDto toUserDto () {
         return UserDto.builder()

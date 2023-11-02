@@ -11,9 +11,12 @@
   <a class="btn-primary m-1" href="/logout" >로그아웃</a>
 </div>
 <div id="userName"></div>
-
+<div id="asdf"></div>
+<button type="button" class="btn btn-outline-primary" id="sendBtn">test button</button>
 </body>
 <script>
+  const username = document.getElementById('userName');
+  const asdf = document.getElementById('asdf');
   window.onload = getUser();
   async function getUser () {
     const resp = await fetch ('/mypage', {
@@ -22,8 +25,33 @@
     const result = await resp.text();
     console.log(result);
 
-    const username = document.getElementById('userName');
     username.innerHTML = result;
+  }
+
+
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.addEventListener('click', sendTest)
+
+
+  // test
+  // 음식점 이름 : 아지겐
+  async function sendTest () {
+    const num = 3649;  // 테스트용 가게 idx
+    console.log(username.innerHTML)
+    const resp = await fetch ('/like', {
+      method: 'post',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({
+        username: username.innerHTML,
+        storeNum: num
+      })
+    })
+    const result = await resp.text();
+    console.log(result);
+
+    asdf.innerHTML = result;
   }
 </script>
 </html>

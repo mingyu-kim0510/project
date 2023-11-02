@@ -16,6 +16,7 @@
     let userId = document.getElementById('userId');
     let userPw = document.getElementById('userPw');
     const Btn = document.getElementById('sendBtn');
+
     Btn.addEventListener('click',
         async () => {
             const res = await fetch('/login', {

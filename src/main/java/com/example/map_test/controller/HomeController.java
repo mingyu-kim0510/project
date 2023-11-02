@@ -30,6 +30,8 @@ public class HomeController {
     public void signup(){
     }
 
-
+    @GetMapping("/mypage")
+    public void mypage(){
+    }
 
 }

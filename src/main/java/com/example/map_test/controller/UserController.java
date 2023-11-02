@@ -26,10 +26,14 @@ public class UserController {
 
     // 로그인
     @PostMapping("/login")
-    public void login(UserDto dto) {
+    public String login(@RequestBody UserDto dto, HttpSession session) {
         var result = userService.login(dto);
         if (result == null) {
             System.out.println("로그인 실패");
+            return null;
+        } else {
+            session.setAttribute("user", dto.getUserId());
+            return (String) session.getAttribute("user");
         }
     }
 
@@ -51,6 +55,12 @@ public class UserController {
     @PostMapping("/api/store/list")
     public @ResponseBody List<StoreResDto> getStoreList(@RequestBody StoreReqDto storeReqDto) {
         return storeService.findByStoreNameContaining(storeReqDto.getSearchVal());
+    }
+
+    @GetMapping("/logout")
+    public void logout(HttpServletResponse response, HttpSession session) throws IOException {
+        session.invalidate();
+        response.sendRedirect("/mypage");
     }
 
 
