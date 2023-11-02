@@ -226,37 +226,46 @@
 
             // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
             function makeOverListener(map, marker, infowindow) {
-
                 return function() {
-                    console.log(marker)
-                    console.log(result)
-                    var temp = '';
+                    // 음식점 정보 표시하기
+                    var tempAddr = '', tempLat = '', tempLng = '';
                     result.forEach(item => {
                         if (item.storeName == marker.Gb) {
-                            temp = item.storeNewAddr
+                            tempAddr = item.storeNewAddr
+                            tempLat = item.storeLat;
+                            tempLng = item.storeLon;
                             return;
                         }
                     })
                     testinput.innerHTML = `
-                <div class='card  ms-3 me-3'>
-                    <div class="card-body w-100">
-                        <div class="row">
-                            <div class="col-8">
-                                <h6 class="card-title text-start">${marker.Gb}</h6>
-                            </div>
-                            <div class="col-4 text-end">
-                                <a><img src="/img/clipboard.svg" style="width: 1.2rem"><a style="font-weight:bold"></a>
+                        <div class='card  ms-3 me-3'>
+                            <div class="card-body w-100">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <h6 class="card-title text-start">${marker.Gb}</h6>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <a href="https://map.kakao.com/?from=total&nil_suggest=btn&tab=place&q=${marker.Gb}"><img src="/img/clipboard.svg" style="width: 1.2rem"><a style="font-weight:bold"></a>
+                                    </div>
+                                </div>
+                                <p class="card-text text-start text-truncate">${tempAddr}</p>
                             </div>
                         </div>
-                        <p class="card-text text-start text-truncate">${temp}</p>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-light  btn-sm mt-3" style="border: 1px solid rgb(128, 128, 128); border-radius: 2rem" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-                    <img src="/img/list.svg" style="width: 1.2rem"><a style="font-weight:bold"> 목록 보기&nbsp;</a>
-                </button>
-                `
+                        <button type="button" class="btn btn-light  btn-sm mt-3" style="border: 1px solid rgb(128, 128, 128); border-radius: 2rem" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                            <img src="/img/list.svg" style="width: 1.2rem"><a style="font-weight:bold"> 목록 보기&nbsp;</a>
+                        </button>
+                    `
+                    // 음식점 정보 block
                     testinput.style.display = 'block'
 
+                    // 지도 좌표 마커로 이동하기
+
+                    var moveLatLon = new kakao.maps.LatLng(tempLat, tempLng);
+                        console.log(tempLat)
+                    console.log(tempLng)
+                    // 지도 중심을 부드럽게 이동시킵니다
+                    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+                    map.panTo(moveLatLon);
                 };
             }
 
