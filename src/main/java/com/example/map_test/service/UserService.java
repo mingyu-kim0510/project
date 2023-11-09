@@ -16,6 +16,8 @@ public interface UserService {
 
     String register(UserDto dto);
 
+    void modify(String originalName, UserDto dto);
+
     default UserEntity dtoToEntity(UserDto dto){
         UserEntity entity = UserEntity.builder()
                 .userIdx(dto.getUserIdx())

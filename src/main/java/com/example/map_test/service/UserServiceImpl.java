@@ -39,4 +39,12 @@ public class UserServiceImpl implements UserService {
         }
         return userRepository.save(dtoToEntity(dto)).getUserId();
     }
+
+    @Override
+    public void modify(String originalName, UserDto dto) {
+        var temp = userRepository.findByUserId(dto.getUserId());
+        if (temp.isPresent()) {
+            temp.get().setUserId(dto.getUserId());
+        }
+    }
 }

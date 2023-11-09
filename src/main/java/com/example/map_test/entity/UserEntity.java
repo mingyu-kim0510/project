@@ -28,12 +28,6 @@ public class UserEntity extends BaseEntity {
     @Column(name = "user_pw")
     private String userPw;
 
-    @Column(name = "regdate")
-    private LocalDateTime regDate;
-
-    @Column(name = "moddate")
-    private LocalDateTime modDate;
-
     @Builder.Default
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<LikeEntity> likeEntityList = new ArrayList<>();

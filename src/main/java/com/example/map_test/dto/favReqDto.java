@@ -9,15 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreResDto {
-    private Long storeIdx;
-    private String storeName;
-    private String storeUrl;
-    private String storeNewAddr;
-    private Double storeLat;
-    private Double storeLon;
-    private String storeCategory;
-    private String storeCategory2;
-    private boolean likeResult;
+public class favReqDto {
 
+    private String storeName;
+    private String storeNewAddr;
+    private Long storeIdx;
 }

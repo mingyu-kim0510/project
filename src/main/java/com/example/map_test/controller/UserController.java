@@ -1,13 +1,13 @@
 package com.example.map_test.controller;
 
 
-import com.example.map_test.dto.StoreReqDto;
 import com.example.map_test.dto.StoreResDto;
 import com.example.map_test.dto.UserDto;
 import com.example.map_test.service.StoreService;
 import com.example.map_test.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +22,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final StoreService storeService;
 
     // 로그인
     @PostMapping("/login")
@@ -51,12 +50,15 @@ public class UserController {
         response.sendRedirect("/login");
     }
 
-    // 검색 후 리스트 출력
-    @PostMapping("/api/store/list")
-    public @ResponseBody List<StoreResDto> getStoreList(@RequestBody StoreReqDto storeReqDto) {
-        return storeService.findByStoreNameContaining(storeReqDto.getSearchVal());
+    @PostMapping("/modify")
+    public void modify(@RequestBody UserDto dto, HttpSession session, Model model) {
+            String originalName = (String) session.getAttribute("user");
+            userService.modify(originalName,dto);
+            session.setAttribute("user", dto.getUserId());
+            model.addAttribute("test", session.getAttribute("user"));
     }
 
+    // 검색 후 리스트 출력
     @GetMapping("/logout")
     public void logout(HttpServletResponse response, HttpSession session) throws IOException {
         session.invalidate();

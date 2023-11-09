@@ -18,17 +18,18 @@ public class LikeEntity {
     @Column(name="like_idx")
     private Long likeIdx;
 
-    @Column(name = "like_num", nullable = false)
-    private Long likeNum;
-
     @ManyToOne
     @JoinColumn(name = "user_idx")
     private UserEntity userEntity;
 
-    public static LikeEntity toSaveLike(favReqDto dto , UserEntity entity) {
-        LikeEntity likeEntity = new LikeEntity();
-        likeEntity.setLikeNum(dto.getStoreNum());
-        likeEntity.setUserEntity(entity);
-        return likeEntity;
+    @ManyToOne
+    @JoinColumn(name = "store_idx")
+    private StoreEntity storeEntity;
+
+    public static LikeEntity toSaveLike(StoreEntity storeEntity , UserEntity entity) {
+        LikeEntity temp = new LikeEntity();
+        temp.setStoreEntity(storeEntity);
+        temp.setUserEntity(entity);
+        return temp;
     }
 }

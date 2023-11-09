@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div class="d-flex">
+  <a class="btn-primary m-1" href="/login" >로그인</a>
+  <a class="btn-primary m-1" href="/signup" >회원가입</a>
+  <a class="btn-primary m-1" href="/logout" >로그아웃</a>
+</div>
+<div id="userName"></div>
+<div id="asdf"></div>
+<button type="button" class="btn btn-outline-primary" id="sendBtn">test button</button>
+
+<nav class="navbar justify-content-around fixed-bottom bg-body-tertiary align-center text-center float-center pb-1">
+  <div class="nav-item" style="width:5rem">
+    <a class='text-decoration-none text-reset fw-bold' onclick="location.href='/map'">
+      <img style="height: 1.5rem" src="/img/map.svg" alt="지도"/>
+      <div style="font-size: 0.7rem">지도</div>
+    </a>
+  </div>
+  <div class="nav-item" style="width:5rem">
+    <a class='text-decoration-none text-reset fw-bold' href="#">
+      <img style="height: 1.5rem" src="/img/house.svg" alt="집"/>
+      <div style="font-size: 0.7rem">메인화면</div>
+    </a>
+  </div>
+  <div class="nav-item" style="width:5rem">
+    <a class='text-decoration-none text-reset fw-bold' onclick="location.href='/mypage'">
+      <img style="height: 1.5rem" src="/img/person-bounding-box.svg" alt="계정"/>
+      <div style="font-size: 0.7rem">마이페이지</div>
+    </a>
+  </div>
+</nav>
+</body>
+<script>
+  const username = document.getElementById('userName');
+  const asdf = document.getElementById('asdf');
+  window.onload = getUser();
+  async function getUser () {
+    const resp = await fetch ('/mypage', {
+      method: 'post'
+    })
+    const result = await resp.text();
+    console.log(result);
+
+    username.innerHTML = result;
+  }
+
+
+  const sendBtn = document.getElementById('sendBtn');
+  sendBtn.addEventListener('click', sendTest)
+
+
+  // test
+  // 음식점 이름 : 아지겐
+  async function sendTest () {
+    const num = 3649;  // 테스트용 가게 idx
+    console.log(username.innerHTML)
+    const resp = await fetch ('/like', {
+      method: 'post',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({
+        username: username.innerHTML,
+        storeNum: num
+      })
+    })
+    const result = await resp.text();
+    console.log(result);
+
+    asdf.innerHTML = result;
+  }
+</script>
+</html>
