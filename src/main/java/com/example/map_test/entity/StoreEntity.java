@@ -61,15 +61,32 @@ public class StoreEntity {
     private DistrictEntity districtEntity;
 
     public StoreResDto toStoreResDto () {
-        return StoreResDto.builder()
-                .storeIdx(storeIdx)
-                .storeName(storeName)
-                .storeNewAddr(storeNewAddr)
-                .storeUrl(storeUrl)
-                .storeLat(storeLat)
-                .storeLon(storeLon)
-                .storeCategory(storeCategory)
-                .storeCategory2(storeCategory2)
-                .build();
+        if(this.districtEntity == null) {
+            return StoreResDto.builder()
+                    .storeIdx(storeIdx)
+                    .storeName(storeName)
+                    .storeNewAddr(storeNewAddr)
+                    .storeUrl(storeUrl)
+                    .storeLat(storeLat)
+                    .storeLon(storeLon)
+                    .storeCategory(storeCategory)
+                    .storeCategory2(storeCategory2)
+                    .storeTel(storeTel)
+                    .build();
+        } else {
+            return StoreResDto.builder()
+                    .storeIdx(storeIdx)
+                    .storeName(storeName)
+                    .storeNewAddr(storeNewAddr)
+                    .storeUrl(storeUrl)
+                    .storeLat(storeLat)
+                    .storeLon(storeLon)
+                    .storeCategory(storeCategory)
+                    .storeCategory2(storeCategory2)
+                    .storeTel(storeTel)
+                    .storeDist(districtEntity.getDistIdx())
+                    .storeCongestion(districtEntity.getDistDensity())
+                    .build();
+        }
     }
 }

@@ -42,9 +42,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void modify(String originalName, UserDto dto) {
+        // 아이디 중복 검사
         var temp = userRepository.findByUserId(dto.getUserId());
-        if (temp.isPresent()) {
-            temp.get().setUserId(dto.getUserId());
+        if (temp.isEmpty()) {
+            var originalAccount = userRepository.findByUserId(originalName);
+            originalAccount.get().setUserId(dto.getUserId());
+            userRepository.save(originalAccount.get());
         }
     }
 }

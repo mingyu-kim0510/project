@@ -18,6 +18,9 @@ public class StoreResDto {
     private Double storeLon;
     private String storeCategory;
     private String storeCategory2;
+    private String storeTel;
     private boolean likeResult;
+    private Long storeDist;
+    private String storeCongestion;
 
 }

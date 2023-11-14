@@ -1,5 +1,6 @@
 package com.example.map_test.repository;
 
+import com.example.map_test.entity.DistrictEntity;
 import com.example.map_test.entity.StoreEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -19,4 +20,8 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     Optional<StoreEntity> findByStoreNewAddrAndStoreName(String storeAddr, String storeName);
 
     Optional<StoreEntity> findByStoreIdx(Long idx);
+
+    List<StoreEntity> findByDistrictEntity(DistrictEntity entity);
+
+
 }

@@ -13,4 +13,5 @@ public interface LikeService {
     boolean select(favReqDto dto, String user);
 
     List<favResDto> selectAll(String user);
+
 }

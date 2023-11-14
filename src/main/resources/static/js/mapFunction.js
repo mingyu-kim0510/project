@@ -13,7 +13,9 @@ function mapInit(mapPosition) {
         center: new kakao.maps.LatLng(mapLat, mapLng), // 지도의 중심좌표
         level: 5, // 지도의 확대 레벨
     };
+
     map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
 }
 
 // 스피너 표기
@@ -33,6 +35,10 @@ async function mapCalc(result, mapPosition) {
         // 지도 내용 초기화
         mapContainer.innerHTML = '';
 
+        // 혼잡도 정보 가져오기
+        let colorList = await postFetcher('/api/color','')
+        colors = colorList.map((item, i) => {return item.color})
+
         // 핀 위치, 중심좌표 지정
         let positions = [],
             latList = [],
@@ -41,7 +47,8 @@ async function mapCalc(result, mapPosition) {
             positions.push({
                 title: item.storeName,
                 storeIdx: item.storeIdx,
-                latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon))
+                latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                congestion: item.storeCongestion
             });
             latList.push(parseFloat(item.storeLat));
             lngList.push(parseFloat(item.storeLon));
@@ -70,7 +77,7 @@ async function mapCalc(result, mapPosition) {
             level: distLevel, // 지도의 확대 레벨
         };
         // 완성된 값으로 지도 그리기
-        mapRender(result, mapOption, positions);
+        await mapRender(result, mapOption, positions);
     }
     // 검색결과 없음
     else {
@@ -80,21 +87,20 @@ async function mapCalc(result, mapPosition) {
     }
 }
 
-function mapRender(result, mapOption, positions) {
+async function mapRender(result, mapOption, positions) {
     // 지도 생성
     map = new kakao.maps.Map(mapContainer, mapOption);
-
-    // 마커 이미지 주소
-    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-
-    // 마커 이미지 크기
-    var imageSize = new kakao.maps.Size(24, 35);
-
-    // 마커 이미지 생성
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-
-    // for (var i = 0; i < positions.length; i++) {
     positions.map(item => {
+        if(item.congestion == "여유") var imageSrc = '/img/safe.png';
+        else if (item.congestion == "보통") var imageSrc = '/img/good.png';
+        else if (item.congestion == "약간 붐빔") var imageSrc = '/img/warn.png';
+        else if (item.congestion == "붐빔") var imageSrc = '/img/danger.png';
+        else var imageSrc = '/img/default.png';
+        // 마커 이미지 크기
+        var imageSize = new kakao.maps.Size(18, 26);
+        // 마커 이미지 생성
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
         marker = new kakao.maps.Marker({
             map: map, // 마커를 표시할 지도
             position: item.latlng, // 마커를 표시할 위치
@@ -109,6 +115,8 @@ function mapRender(result, mapOption, positions) {
         mapContainer.addEventListener('touchend', touchStartListener());
     });
 
+    // getColor();
+
     // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
     function makeOverListener(map, marker) {
         return async function () {
@@ -117,38 +125,29 @@ function mapRender(result, mapOption, positions) {
             let tempAddr = '',
                 tempLat = '',
                 tempLng = '',
-                tempUrl = '';
+                tempUrl = '',
+                tempTel = '';
             result.map((item) => {
                 if (item.storeIdx == marker.Gb) {
                     tempAddr = item.storeNewAddr;
                     tempLat = item.storeLat;
                     tempLng = item.storeLon;
                     tempUrl = item.storeUrl;
+                    tempTel = item.storeTel;
                     return;
                 }
             });
-            let isTempUrl;
-            if(tempUrl) isTempUrl = true;
-            else isTempUrl = false;
-
+            if(tempTel == null) tempTel = ''
             // 음식점 정보 + 찜 여부 확인하기
-            let resp = await fetch('/getLike', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+            let result2 = await postFetcher('/getLike', {
                     storeIdx: marker.Gb,
                     storeNewAddr: tempAddr,
-                }),
-            });
-            let result2 = await resp.json();
-            var star;
-
-            if (result2.likeResult == 'true' && sessionResult !== '') {
-                star = `<img class="align-top align-end" src="/img/star-fill.svg"  alt="star"/>`;
-            } else if (sessionResult == '') {
+                })
+            let star = '';
+            if (sessionResult === '') {
                 star = ``;
+            } else if (result2.likeResult) {
+                star = `<img class="align-top align-end" src="/img/star-fill.svg"  alt="star"/>`;
             } else {
                 star = `<img class="align-top align-end" src="/img/star.svg"  alt="star"/>`;
             }
@@ -160,20 +159,21 @@ function mapRender(result, mapOption, positions) {
                         style="bottom: calc(3.5rem + 11%); width:95%">
                             <div class="card-body w-100">
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-9">
                                         <h6 class="card-title text-start fw-bold">${result2.storeName}</h6>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-auto" style="margin-left: auto; margin-right:0">
                                     <a id="starBtn" onclick="dataSend(this)" data-name="${tempAddr}" data-store="${result2.storeName}">
                                         ${star}</a>
                                     </div>
-                                    <div class="col-auto text-end align-end">
-                                        <a onclick="if(${isTempUrl}) location.href='${tempUrl}'">
-                                            <img class="align-top" src="/img/box-arrow-up-right.svg" style="width: 1.2rem" alt="outerLink">
+                                    <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
+                                        <a onclick="if(${!!tempUrl}) {document.getElementById('framesrc').src='${tempUrl}'; document.querySelector('#myModal').style.display = 'block'}">
+                                            <img class="align-top text-end" src="/img/box-arrow-up-right.svg" style="width: 1.2rem; " alt="outerLink">
                                         </a>
                                     </div>
                                 </div>
-                                <p class="card-text text-start text-truncate" style="font-size:0.8rem">${tempAddr}</p>
+                                <p class="card-text text-start text-truncate" style="font-size:0.8rem; margin-bottom: 0.375rem">${tempAddr.substring(5)}</p>
+                                <p class="card-text text-start text-truncate" style="font-size:0.8rem">${tempTel}</p>
                             </div>
                         </div>
                     `;
@@ -189,6 +189,7 @@ function mapRender(result, mapOption, positions) {
             // 지도 중심을 부드럽게 이동시킵니다
             // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
             map.panTo(moveLatLon);
+            navigator.clipboard.writeText(marker.Gb+', ');
         };
     }
 
@@ -272,17 +273,10 @@ function zoomCalc(distance) {
 
 // 찜 기능 (백으로 전송)
 async function dataSend(element) {
-    const res = await fetch('/like', {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            storeName: element.dataset.store,
-            storeNewAddr: element.dataset.name,
-        }),
-    });
-    const result = await res.text();
+    const result = await postFetcher('/like', {
+        storeName: element.dataset.store,
+        storeNewAddr: element.dataset.name,
+    })
     const starBtn = document.getElementById('starBtn');
     if (result == 1) {
         starBtn.innerHTML = `<img class="align-top align-end" src="/img/star-fill.svg"  alt="star-fill"/>`;
@@ -290,3 +284,41 @@ async function dataSend(element) {
         starBtn.innerHTML = `<img class="align-top align-end" src="/img/star.svg"  alt="star"/>`;
     }
 }
+
+// 모피어스에서 현위치 지정하기
+function getCurrentLocation () {
+    getLocation().then(result => {
+        marker.setMap(null);
+        // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+        let lat = result.coords.latitude, // 위도
+            lon = result.coords.longitude// 경도
+
+        var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+        // 마커와 인포윈도우를 표시합니다
+        marker = new kakao.maps.Marker({
+            map: map,
+            position: locPosition
+        });
+        // 지도 중심좌표를 접속위치로 변경합니다
+        map.setCenter(locPosition);
+
+    })
+}
+function getLocation () {
+    return new Promise((resolve) => {
+        M.plugin('location').current({
+            timeout:10000,
+            maximumAge: 1,
+            callback(result) {
+                resolve(result);
+            },
+        });
+    });
+}
+getHere.addEventListener('click', () => {
+        if (navigator.geolocation) {
+            getCurrentLocation()
+        }
+    }
+)

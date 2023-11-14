@@ -19,19 +19,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class StoreServiceImpl implements StoreService {
-
     private final StoreRepository storeRepository;
-    private final PeopleApi peopleApi;
-    private final PeopleRepository peopleRepository;
-
     // 옵션 검색기능
     @Override
     public List<StoreResDto> findStore(StoreReqDto dto) {
         if (dto.getLon() != null) {
             final Double MAP_DIST_LAT = dto.getIntervals() * 3;
             final Double MAP_DIST_LNG = dto.getIntervals() * 6;
-            System.out.println(MAP_DIST_LAT);
-            var temp = findStoreListinLocation
+            var temp = findStoreListInLocation
                     (dto.getSearchVal(),
                             dto.getCategory1(),
                             dto.getCategory2(),
@@ -53,20 +48,17 @@ public class StoreServiceImpl implements StoreService {
             });
             return temp2;
     }
-
     @Override
     public StoreResDto findOne (Long storeIdx) {
         return storeRepository.findByStoreIdx(storeIdx).map(StoreEntity::toStoreResDto).orElse(null);
     }
 
 
-
     public List<StoreEntity> findStoreList (String searchVal, String c1, String c2, String c3) {
         return storeRepository.findByStoreAddrContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingOrStoreNewAddrContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingOrStoreNameContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingOrStoreCategory2ContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContaining
                 (searchVal, c1, c2, c3, searchVal, c1, c2, c3, searchVal, c1, c2, c3, searchVal, c1, c2, c3);
     }
-
-    public List<StoreEntity> findStoreListinLocation (String searchVal, String c1, String c2, String c3, Double latMin, Double latMax, Double lonMin, Double lonMax) {
+    public List<StoreEntity> findStoreListInLocation (String searchVal, String c1, String c2, String c3, Double latMin, Double latMax, Double lonMin, Double lonMax) {
         return storeRepository.findByStoreAddrContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreLatBetweenAndStoreLonBetweenOrStoreNewAddrContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreLatBetweenAndStoreLonBetweenOrStoreNameContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreLatBetweenAndStoreLonBetweenOrStoreCategory2ContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreCategoryContainingAndStoreLatBetweenAndStoreLonBetween
                 (searchVal, c1, c2, c3, latMin, latMax, lonMin, lonMax, searchVal, c1, c2, c3, latMin, latMax, lonMin, lonMax, searchVal, c1, c2, c3, latMin, latMax, lonMin, lonMax, searchVal, c1, c2, c3, latMin, latMax, lonMin, lonMax);
     }

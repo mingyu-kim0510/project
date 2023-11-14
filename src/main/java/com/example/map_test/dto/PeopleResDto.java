@@ -29,7 +29,16 @@ public class PeopleResDto {
         private String distDensity;
         @JsonProperty("PPLTN_TIME")
         private String distUpdated;
-        @JsonProperty("FCST_YN")
-        private String distReplace;
+        @JsonProperty("FCST_PPLTN")
+        private List<PeoplePredict> peoplePredicts;
+
+        @Data
+        @NoArgsConstructor
+        public static class PeoplePredict {
+            @JsonProperty("FCST_TIME")
+            private String predictTime;
+            @JsonProperty("FCST_CONGEST_LVL")
+            private String predictCongestion;
+        }
     }
 }

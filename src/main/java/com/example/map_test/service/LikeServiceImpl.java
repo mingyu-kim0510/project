@@ -3,6 +3,7 @@ package com.example.map_test.service;
 import com.example.map_test.dto.favReqDto;
 import com.example.map_test.dto.favResDto;
 import com.example.map_test.entity.LikeEntity;
+import com.example.map_test.entity.StoreEntity;
 import com.example.map_test.entity.UserEntity;
 import com.example.map_test.repository.LikeRepository;
 import com.example.map_test.repository.StoreRepository;
@@ -24,10 +25,10 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     @Override
     public Integer save (favReqDto dto, String user) {
-        Optional<UserEntity> entity = userRepository.findByUserId(user);
+        var entity = userRepository.findByUserId(user);
         var temp = storeRepository.findByStoreNewAddrAndStoreName(dto.getStoreNewAddr(), dto.getStoreName());
         if(entity.isPresent() && temp.isPresent()) {
-            Optional<LikeEntity> likeEntity = likeRepository.findByStoreEntityAndUserEntity(temp.get(), entity.get());
+            var likeEntity = likeRepository.findByStoreEntityAndUserEntity(temp.get(), entity.get());
             if(likeEntity.isPresent()) {
                 likeRepository.deleteByStoreEntityAndUserEntity(temp.get(), entity.get());
                 return 0;
@@ -42,8 +43,8 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     @Override
     public boolean select (favReqDto dto, String user) {
-        Optional<UserEntity> entity = userRepository.findByUserId(user);
-        var temp = storeRepository.findByStoreNewAddrAndStoreName(dto.getStoreNewAddr(), dto.getStoreName());
+        var entity = userRepository.findByUserId(user);
+        var temp = storeRepository.findByStoreIdx(dto.getStoreIdx());
         if(entity.isPresent() && temp.isPresent()) {
             Optional<LikeEntity> likeEntity = likeRepository.findByStoreEntityAndUserEntity(temp.get(), entity.get());
             return likeEntity.isPresent();
@@ -54,12 +55,16 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     @Override
     public List<favResDto> selectAll (String user) {
-        Optional<UserEntity> entity = userRepository.findByUserId(user);
-        var temp = likeRepository.findByUserEntity(entity.get());
-        List<favResDto> templist = new ArrayList<>();
-        temp.forEach(item -> {
-            templist.add(favResDto.toFavDto(item));
-        });
-        return templist;
+        var entity = userRepository.findByUserId(user);
+        if(entity.isPresent()) {
+            var temp = likeRepository.findByUserEntity(entity.get());
+
+            List<favResDto> templist = new ArrayList<>();
+            temp.forEach(item -> {
+                templist.add(favResDto.toFavDto(item));
+            });
+            return templist;
+        }
+        return null;
     }
 }
