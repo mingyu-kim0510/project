@@ -57,13 +57,10 @@ public class LikeServiceImpl implements LikeService {
     public List<favResDto> selectAll (String user) {
         var entity = userRepository.findByUserId(user);
         if(entity.isPresent()) {
-            var temp = likeRepository.findByUserEntity(entity.get());
-
-            List<favResDto> templist = new ArrayList<>();
-            temp.forEach(item -> {
-                templist.add(favResDto.toFavDto(item));
-            });
-            return templist;
+            var likeEntityList = likeRepository.findByUserEntity(entity.get());
+            List<favResDto> likeList = new ArrayList<>();
+            likeEntityList.forEach(item -> likeList.add(favResDto.toFavDto(item)));
+            return likeList;
         }
         return null;
     }

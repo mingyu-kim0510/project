@@ -22,5 +22,7 @@ public class StoreResDto {
     private boolean likeResult;
     private Long storeDist;
     private String storeCongestion;
+    private String predictCongestion;
+    private String predictTime;
 
 }

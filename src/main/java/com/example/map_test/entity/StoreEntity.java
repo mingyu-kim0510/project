@@ -60,7 +60,7 @@ public class StoreEntity {
     @JoinColumn(name = "dist_idx")
     private DistrictEntity districtEntity;
 
-    public StoreResDto toStoreResDto () {
+    public StoreResDto toStoreResDto (int predictTime) {
         if(this.districtEntity == null) {
             return StoreResDto.builder()
                     .storeIdx(storeIdx)
@@ -73,7 +73,7 @@ public class StoreEntity {
                     .storeCategory2(storeCategory2)
                     .storeTel(storeTel)
                     .build();
-        } else {
+        } else if (this.districtEntity.getPredictEntityList().isEmpty() || predictTime==0) {
             return StoreResDto.builder()
                     .storeIdx(storeIdx)
                     .storeName(storeName)
@@ -86,6 +86,23 @@ public class StoreEntity {
                     .storeTel(storeTel)
                     .storeDist(districtEntity.getDistIdx())
                     .storeCongestion(districtEntity.getDistDensity())
+                    .build();
+        } else {
+
+            return StoreResDto.builder()
+                    .storeIdx(storeIdx)
+                    .storeName(storeName)
+                    .storeNewAddr(storeNewAddr)
+                    .storeUrl(storeUrl)
+                    .storeLat(storeLat)
+                    .storeLon(storeLon)
+                    .storeCategory(storeCategory)
+                    .storeCategory2(storeCategory2)
+                    .storeTel(storeTel)
+                    .storeDist(districtEntity.getDistIdx())
+                    .storeCongestion(districtEntity.getDistDensity())
+                    .predictCongestion(districtEntity.getPredictEntityList().get(predictTime-1).getPredictCongestion())
+                    .predictTime(districtEntity.getPredictEntityList().get(predictTime-1).getPredictTime())
                     .build();
         }
     }

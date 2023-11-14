@@ -103,9 +103,6 @@
         </div>
     </div>
 </div>
-
-
-
 <!-- 검색 -->
 <div class="container-fluid my-2 search_control" style="transform: rotate(0.04deg)">
     <input
@@ -217,6 +214,10 @@
             checked
             data-name=""
     />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="likeBtn">
+        like
+    </label>
+    <input type="button" class="btn" id="likeBtn" style="margin-left:0.75rem"/>
 </div>
 <!-- 옵션 콜랩스 -->
 <div class="collapse extra_collapse w-100" id="collapseExample">
@@ -297,6 +298,7 @@
 
 
 <div id="menuBar"></div>
+<script src="/js/fetcher.js"></script>
 <script src="/js/menuBar.js"></script>
 <script src="/js/map.js"></script>
 <script src="/js/mapFunction.js"></script>

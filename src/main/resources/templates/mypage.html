@@ -74,6 +74,7 @@
 <script src="/js/menuBar.js"></script>
 <!-- 모달 끝 -->
 </body>
+<script src="/js/fetcher.js"></script>
 <script>
   const userName = document.getElementById('userName');
   const modifyBtn = document.getElementById('modifyBtn');
@@ -85,16 +86,7 @@
   })
 
   saveBtn.addEventListener('click', async () => {
-    const res = await fetch('/modify', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        userId: modalUserName.value
-      })
-    })
-
+    await postFetcher('/modify',{ userId: modalUserName.value });
     userName.innerHTML = modalUserName.value;
   })
 

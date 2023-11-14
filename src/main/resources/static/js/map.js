@@ -11,6 +11,7 @@ const collapse = document.querySelector('.collapse'); // 콜래스 클래스
 const reRenderBtn = document.getElementById('reRenderBtn'); // 지역 내 재검색 버튼
 const getHere = document.getElementById('getHere'); // 현위치 버튼
 const timeBtn = document.getElementById('timeBtn'); // 혼잡도 예측 버특
+const likeBtn = document.getElementById('likeBtn');
 var map = new kakao.maps.Map(mapContainer, {
     center: new kakao.maps.LatLng(37.554842, 126.9717319), // 지도의 중심좌표
     level: 5, // 지도의 확대 레벨
@@ -38,21 +39,13 @@ window.onload = async () => {
         bootstrapOffcanvas.show();
 
         // request
-        const response = await fetch('/api/store/list', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        const result = await postFetcher('/api/store/list', {
                 searchVal: "",
                 category1: category1,
                 category2: "",
                 category3: "",
-            }),
         });
-        await fetch('/api/map/init');
-        // 검색 결과
-        let result = await response.json();
+        await getFetcher('/api/map/init','');
 
 
         // 검색 결과로 맵핀 계산
@@ -81,20 +74,12 @@ searchVal.addEventListener('keypress', async function search(e) {
         });
 
         // request
-        const response = await fetch('/api/store/list', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        let result = await postFetcher('/api/store/list', {
                 searchVal: searchVal.value,
                 category1: category1,
                 category2: category2.value,
                 category3: category3.value,
-            }),
-        });
-        // 검색 결과
-        let result = await response.json();
+        })
 
         // 검색 결과로 맵핀 계산
         mapCalc(result);
@@ -123,51 +108,17 @@ reRenderBtn.addEventListener('click', async () => {
         lon: lon,
         intervals: intervals,
     });
-    console.log(result)
-
-    let colors;
-    if (result.length !== 0) {
-        // 지도 내용 초기화
-        mapContainer.innerHTML = '';
-
-        // 혼잡도 정보 가져오기
-        let colorList = await postFetcher('/api/color', '')
-        colors = colorList.map((item, i) => {
-            return item.color
-        })
-
-        // 핀 위치, 중심좌표 지정
-        let positions = [];
-        result.forEach(item => {
-            positions.push({
-                title: item.storeName,
-                storeIdx: item.storeIdx,
-                latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
-                congestion: colors[item.storeDist - 1]
-            });
-        });
-        var mapOption = {
-            center: new kakao.maps.LatLng(lon, lat), // 지도의 중심좌표
-            level: map.getLevel(), // 지도의 확대 레벨
-        };
-
-        await mapRender(result, mapOption, positions);
-    }
-
-    timeBtn.addEventListener('click', ()=>{
-
-    })
+    await mapCalcRevised(result, false);
 });
 
+// 타임 버튼
+timeBtn.addEventListener('click', async ()=>{
+    const result = await postFetcher('/api/getPredict')
+    await mapCalcRevised(result, true);
+})
+// 찜 목록만 검색
+likeBtn.addEventListener('click', async ()=>{
+    const result = await postFetcher('/getLikeAll')
+    await mapCalcRevised(result, false);
+})
 
-async function postFetcher(uri, body) {
-    if(body === ''){
-        body = {}
-    }
-    const response = await fetch(uri,{
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(body)
-    })
-    return await response.json();
-}

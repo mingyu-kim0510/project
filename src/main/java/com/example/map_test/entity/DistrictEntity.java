@@ -44,7 +44,7 @@ public class DistrictEntity {
     private List<StoreEntity> storeEntityList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "districtEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "districtEntity", fetch = FetchType.EAGER)
     private List<PredictEntity> predictEntityList = new ArrayList<>();
 
     public DistrictColorResDto toColorDto () {

@@ -1,3 +1,44 @@
+// 지도 기본 설정
+async function mapCalcRevised(result, isPredict) {
+    const lat = map.getCenter().La;
+    const lon = map.getCenter().Ma;
+    const intervals = distCalc(map.getLevel()) * 0.00001126887;
+
+    if (result.length !== 0) {
+        // 지도 내용 초기화
+        mapContainer.innerHTML = '';
+
+        // 핀 위치, 중심좌표 지정
+        let positions = [];
+        if (isPredict) {
+            result.forEach(item => {
+                positions.push({
+                    title: item.storeName,
+                    storeIdx: item.storeIdx,
+                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                    congestion: item.predictCongestion
+                });
+            });
+        } else {
+            result.forEach(item => {
+                positions.push({
+                    title: item.storeName,
+                    storeIdx: item.storeIdx,
+                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                    congestion: item.storeCongestion
+                });
+            });
+        }
+        console.log(positions)
+        var mapOption = {
+            center: new kakao.maps.LatLng(lon, lat), // 지도의 중심좌표
+            level: map.getLevel(), // 지도의 확대 레벨
+        };
+
+        await mapRender(result, mapOption, positions);
+    }
+}
+
 // 지도 초기화
 function mapInit(mapPosition) {
     mapContainer.innerHTML = ``;
@@ -34,10 +75,6 @@ async function mapCalc(result, mapPosition) {
     if (result.length !== 0) {
         // 지도 내용 초기화
         mapContainer.innerHTML = '';
-
-        // 혼잡도 정보 가져오기
-        let colorList = await postFetcher('/api/color','')
-        colors = colorList.map((item, i) => {return item.color})
 
         // 핀 위치, 중심좌표 지정
         let positions = [],

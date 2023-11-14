@@ -29,15 +29,9 @@ public class PeopleServiceImpl implements PeopleService{
 
         // 장소 id 리스트
         List<String> testList = new ArrayList<>();
-        for(int i = 1; i < 10; i++) {
-            testList.add("POI00" + i);
-        }
-        for(int i = 10; i < 100; i++) {
-            testList.add("POI0" + i);
-        }
-        for(int i = 100; i < 114; i++) {
-            testList.add("POI" + i);
-        }
+        for(int i = 1; i < 10; i++) { testList.add("POI00" + i); }
+        for(int i = 10; i < 100; i++) { testList.add("POI0" + i); }
+        for(int i = 100; i < 114; i++) { testList.add("POI" + i); }
         predictRepository.deleteAllInBatch();
         // API 병렬 Request -> dto -> entity로 Update
         testList.parallelStream().forEach(item -> {
@@ -45,26 +39,30 @@ public class PeopleServiceImpl implements PeopleService{
             var dto = peopleApi.searchPeople(item);
 
             // 지역 코드로 selectOne
-            var entity = peopleRepository.findByDistCode(dto.getPeople().get(0).getDistCode()).get();
-            List<PredictEntity> predictEntityList = new ArrayList<>();
-            PredictEntity predictEntity = new PredictEntity();
+            var entity = peopleRepository.findByDistCode(dto.getPeople().get(0).getDistCode());
 
-            for(var i = 0; i < 4; i++) {
-                predictEntityList.add(new PredictEntity());
-            }
-            // dto -> entity
-            entity.setDistDensity(dto.getPeople().get(0).getDistDensity());
-            entity.setDistUpdated(dto.getPeople().get(0).getDistUpdated());
-            if(dto.getPeople().get(0).getPeoplePredicts() != null) {
-                for(var i =0; i < predictEntityList.size(); i++) {
-                    predictEntityList.get(i).setDistrictEntity(entity);
-                    predictEntityList.get(i).setPredictCongestion(dto.getPeople().get(0).getPeoplePredicts().get(i).getPredictCongestion());
-                    predictEntityList.get(i).setPredictTime(dto.getPeople().get(0).getPeoplePredicts().get(i).getPredictTime());
-                    predictRepository.save(predictEntityList.get(i));
+            if (entity.isPresent()) {
+                List<PredictEntity> predictEntityList = new ArrayList<>();
+
+                for(var i = 0; i < 4; i++) {
+                    predictEntityList.add(new PredictEntity());
                 }
+
+                // dto -> entity
+                entity.get().setDistDensity(dto.getPeople().get(0).getDistDensity());
+                entity.get().setDistUpdated(dto.getPeople().get(0).getDistUpdated());
+                if(dto.getPeople().get(0).getPeoplePredicts() != null) {
+                    for(var i =0; i < predictEntityList.size(); i++) {
+                        predictEntityList.get(i).setDistrictEntity(entity.get());
+                        predictEntityList.get(i).setPredictCongestion(dto.getPeople().get(0).getPeoplePredicts().get(i).getPredictCongestion());
+                        predictEntityList.get(i).setPredictTime(dto.getPeople().get(0).getPeoplePredicts().get(i).getPredictTime());
+                        predictRepository.save(predictEntityList.get(i));
+                    }
+                }
+                // update 쿼리 실행
+                peopleRepository.save(entity.get());
             }
-            // update 쿼리 실행
-            peopleRepository.save(entity);
+
 
         });
         System.out.println("forEach end...");

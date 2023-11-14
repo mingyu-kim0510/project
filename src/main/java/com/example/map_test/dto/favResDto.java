@@ -13,20 +13,37 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class favResDto {
-    private Long likeIdx;
+    private Long storeIdx;
     private String storeName;
     private String storeNewAddr;
     private String storeUrl;
-    private String distDensity;
+    private String storeTel;
+    private Double storeLat;
+    private Double storeLon;
+    private String storeCongestion;
     public static favResDto toFavDto (LikeEntity entity){
 
-
-        return favResDto.builder()
-                .likeIdx(entity.getStoreEntity().getStoreIdx())
-                .storeName(entity.getStoreEntity().getStoreName())
-                .storeUrl(entity.getStoreEntity().getStoreUrl())
-                .storeNewAddr(entity.getStoreEntity().getStoreNewAddr())
-                .distDensity(entity.getStoreEntity().getDistrictEntity().getDistDensity())
-                .build();
+        if(entity.getStoreEntity().getDistrictEntity() != null) {
+            return favResDto.builder()
+                    .storeIdx(entity.getStoreEntity().getStoreIdx())
+                    .storeName(entity.getStoreEntity().getStoreName())
+                    .storeUrl(entity.getStoreEntity().getStoreUrl())
+                    .storeNewAddr(entity.getStoreEntity().getStoreNewAddr())
+                    .storeLat(entity.getStoreEntity().getStoreLat())
+                    .storeLon(entity.getStoreEntity().getStoreLon())
+                    .storeTel(entity.getStoreEntity().getStoreTel())
+                    .storeCongestion(entity.getStoreEntity().getDistrictEntity().getDistDensity())
+                    .build();
+        } else {
+            return favResDto.builder()
+                    .storeIdx(entity.getStoreEntity().getStoreIdx())
+                    .storeName(entity.getStoreEntity().getStoreName())
+                    .storeUrl(entity.getStoreEntity().getStoreUrl())
+                    .storeNewAddr(entity.getStoreEntity().getStoreNewAddr())
+                    .storeLat(entity.getStoreEntity().getStoreLat())
+                    .storeLon(entity.getStoreEntity().getStoreLon())
+                    .storeTel(entity.getStoreEntity().getStoreTel())
+                    .build();
+        }
     }
 }

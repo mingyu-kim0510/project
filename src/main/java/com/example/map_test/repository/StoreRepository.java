@@ -23,5 +23,7 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
     List<StoreEntity> findByDistrictEntity(DistrictEntity entity);
 
+    List<StoreEntity> findByStoreLatBetweenAndStoreLonBetween (Double latMin, Double latMax, Double lonMin, Double lonMax);
+
 
 }

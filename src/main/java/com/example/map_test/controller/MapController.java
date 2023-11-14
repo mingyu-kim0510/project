@@ -1,13 +1,11 @@
 package com.example.map_test.controller;
 
 import com.example.map_test.dto.DistrictColorResDto;
-import com.example.map_test.dto.PeopleResDto;
 import com.example.map_test.dto.StoreReqDto;
 import com.example.map_test.dto.StoreResDto;
 import com.example.map_test.service.PeopleService;
 import com.example.map_test.service.StoreService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -48,9 +46,11 @@ public class MapController {
     public void getPinColor() {
         peopleService.getColor();
     }
-    @PostMapping("/getPredict")
-    public void getPredictPin() {
 
+    @PostMapping("/getPredict")
+    public List<StoreResDto> getPredictPin(StoreReqDto dto) {
+        int test = 1;
+        return storeService.findStorePredict(dto, test);
     }
     @GetMapping("/map/init")
     public void initSession (HttpSession session) {
