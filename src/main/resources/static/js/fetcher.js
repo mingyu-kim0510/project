@@ -1,13 +1,8 @@
-async function getFetcher(uri, data) {
-    if(data === '') {
-        data = {}
-    }
+async function getFetcher(uri) {
     const response = await fetch (uri, {
-        method: 'get',
-        data: data
+        method: 'get'
     })
-
-    return await response.json();
+    return await response.text();
 }
 
 // post 전송 함수

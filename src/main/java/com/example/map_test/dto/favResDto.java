@@ -21,6 +21,7 @@ public class favResDto {
     private Double storeLat;
     private Double storeLon;
     private String storeCongestion;
+    private String predictCongestion;
     public static favResDto toFavDto (LikeEntity entity){
 
         if(entity.getStoreEntity().getDistrictEntity() != null) {

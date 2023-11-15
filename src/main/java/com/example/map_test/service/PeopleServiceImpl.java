@@ -62,8 +62,6 @@ public class PeopleServiceImpl implements PeopleService{
                 // update 쿼리 실행
                 peopleRepository.save(entity.get());
             }
-
-
         });
         System.out.println("forEach end...");
 

@@ -19,5 +19,6 @@ public class StoreReqDto {
     private Double lat;
     private Double lon;
     private Double intervals;
+    private int isPeopleApi;
 
 }

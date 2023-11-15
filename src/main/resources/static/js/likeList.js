@@ -39,7 +39,7 @@ function render(result, isChecked) {
                                 <div class="col-auto" style="margin-left:auto; margin-right:.375rem">
                                     <div class="row">
                                         <div class="col-auto">
-                                            ${colorinnerHTML(item.storeCongestion)}
+                                            ${colorPicker(item.storeCongestion)}
                                         </div>
                                         <div class="col-auto">
                                             <a style="margin-left:auto; margin-right:0" id="like-button" data-name="${item.storeName}" data-store="${item.storeNewAddr}" onclick="undo(this);">
@@ -84,7 +84,7 @@ async function undo(element) {
     render(tempData);
 }
 
-function colorinnerHTML (element) {
+function colorPicker (element) {
     if (element == '붐빔') {
         return `
             <div

@@ -19,6 +19,7 @@
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"
     ></script>
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css">
     <style>
         body {
@@ -202,7 +203,7 @@
     <button type="button" class="btn btn-sm btn-light  shadow rounded-pill" id="reRenderBtn">
         <a style="transform:rotate(0.04deg); font-weight: bold">이 지역에서 검색</a>
     </button>
-    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="timeBtn">
+    <label class="btn btn-sm btn-light rounded-circle shadow-sm" style="transform:rotate(0.04deg); font-weight: bold" for="timeBtn">
         <img src="/img/clock-history.svg" alt=""/>
     </label>
     <input
@@ -214,8 +215,8 @@
             checked
             data-name=""
     />
-    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="likeBtn">
-        like
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="display:none; width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="likeBtn" id="likeLabel">
+        <img src="/img/star-fill.svg" alt="like">
     </label>
     <input type="button" class="btn" id="likeBtn" style="margin-left:0.75rem"/>
 </div>
@@ -224,10 +225,8 @@
     <div class="card card-body w-100" style="border: none;">
         <div class="mb-3 w-100" style="margin-top: 4.75rem">
             <div>
-                <div class="mb-4 fw-bold h4" style="transform:rotate(0.04deg)">세부설정</div>
-                <hr class="my-4" />
+                <div class="mb-4 fw-bold h4" style="transform:rotate(0.04deg)">카테고리</div>
             </div>
-
             <select class="form-select mb-3" id="category2" aria-label="Large select example">
                 <option selected value="" style="transform:rotate(0.04deg)">전체</option>
                 <option value="구이" style="transform:rotate(0.04deg)">구이</option>
@@ -240,6 +239,18 @@
                 <option value="주점" style="transform:rotate(0.04deg)">주점</option>
                 <option value="비건" style="transform:rotate(0.04deg)">비건</option>
             </select>
+
+            <div class="mb-4 fw-bold h4" style="transform:rotate(0.04deg)">표시옵션</div>
+            <div class="btn-group w-100" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+                <label class="btn btn-outline-primary w-100" for="btnradio1">-</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="apiToggle" autocomplete="off">
+                <label class="btn btn-outline-primary w-100" for="apiToggle">API</label>
+
+                <input type="radio" class="btn-check" name="btnradio" id="safeToggle" autocomplete="off">
+                <label class="btn btn-outline-primary w-100" for="safeToggle">여유</label>
+            </div>
         </div>
     </div>
 </div>

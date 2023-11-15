@@ -1,8 +1,69 @@
-// 지도 기본 설정
+// 지도 관련 계산
+async function mapCalc(result, mapPosition, isPosition) {
+    // 결과 값 공백 확인하기
+    // 결과 있음
+    if (result.length !== 0) {
+        // 지도 내용 초기화
+        mapContainer.innerHTML = '';
+
+        // 핀 위치, 중심좌표 지정
+        var positions = [],
+            latList = [],
+            lngList = [],
+            mapOption = '',
+            congestion = '',
+            distLevel = 0;
+
+        result.forEach((item) => {
+            if (isPosition !== 1) congestion = item.storeCongestion;
+            else congestion = item.predictCongestion;
+            // mapSearch
+            if(isPosition != null) {
+                positions.push({
+                    title: item.storeName,
+                    storeIdx: item.storeIdx,
+                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                    congestion: congestion,
+
+                });
+                distLevel = map.getLevel();
+                mapOption = newMapOption(map.getCenter().Ma, map.getCenter().La, distLevel);
+            // Predict
+            } else {
+                positions.push({
+                    title: item.storeName,
+                    storeIdx: item.storeIdx,
+                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                    congestion: item.storeCongestion
+                });
+                latList.push(parseFloat(item.storeLat));
+                lngList.push(parseFloat(item.storeLon));
+                // 중심 좌표값 얻어오기
+                var latMid= Math.max(...latList) - (Math.max(...latList) - Math.min(...latList)) / 2;
+                var lngMid= Math.max(...lngList) - (Math.max(...lngList) - Math.min(...lngList)) / 2;
+                // 지도 확대레벨 계산하기
+                const latDist= Math.max(Math.max(...latList) - Math.min(...latList)) * 88740;
+                const lngDist= Math.max(Math.max(...lngList) - Math.min(...lngList)) * 88740;
+                // 화면비율에 맞춰 최종 거리값 산출
+                const distance= Math.max(latDist / 8.6, lngDist / 4);
+                // 화면에 맞춰서 지도 확대 되도록 세팅
+                distLevel = zoomCalc(distance);
+                mapOption = newMapOption(latMid, lngMid, distLevel);
+            }
+        });
+
+        await mapRender(result, mapOption, positions);
+    }
+    // 검색결과 없음
+    else {
+        // 현위치에서 지도 초기화
+        mapInit(mapPosition);
+        storeList.innerHTML = `<div>검색결과가 없습니다.</div>`;
+    }
+}
+
+// 지도 관련 계산 (좌표계산 제외)
 async function mapCalcRevised(result, isPredict) {
-    const lat = map.getCenter().La;
-    const lon = map.getCenter().Ma;
-    const intervals = distCalc(map.getLevel()) * 0.00001126887;
 
     if (result.length !== 0) {
         // 지도 내용 초기화
@@ -29,12 +90,7 @@ async function mapCalcRevised(result, isPredict) {
                 });
             });
         }
-        console.log(positions)
-        var mapOption = {
-            center: new kakao.maps.LatLng(lon, lat), // 지도의 중심좌표
-            level: map.getLevel(), // 지도의 확대 레벨
-        };
-
+        var mapOption = newMapOption(map.getCenter().Ma, map.getCenter().La, map.getLevel());
         await mapRender(result, mapOption, positions);
     }
 }
@@ -42,7 +98,7 @@ async function mapCalcRevised(result, isPredict) {
 // 지도 초기화
 function mapInit(mapPosition) {
     mapContainer.innerHTML = ``;
-    // marker.setMap(null)
+
     // default (서울역) 좌표
     let mapLat = 37.554842;
     let mapLng = 126.9717319;
@@ -68,61 +124,7 @@ function spinner() {
     `;
 }
 
-// 지도 관련 계산
-async function mapCalc(result, mapPosition) {
-    // 결과 값 공백 확인하기
-    // 결과 있음
-    if (result.length !== 0) {
-        // 지도 내용 초기화
-        mapContainer.innerHTML = '';
 
-        // 핀 위치, 중심좌표 지정
-        let positions = [],
-            latList = [],
-            lngList = [];
-        result.forEach((item) => {
-            positions.push({
-                title: item.storeName,
-                storeIdx: item.storeIdx,
-                latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
-                congestion: item.storeCongestion
-            });
-            latList.push(parseFloat(item.storeLat));
-            lngList.push(parseFloat(item.storeLon));
-        });
-
-        // 중심 좌표값 얻어오기
-        const latMid = Math.max(...latList) - (Math.max(...latList) - Math.min(...latList)) / 2;
-        const lngMid = Math.max(...lngList) - (Math.max(...lngList) - Math.min(...lngList)) / 2;
-        // 지도 확대레벨 계산하기
-        let latDist = Math.max(Math.max(...latList) - Math.min(...latList));
-        let lngDist = Math.max(Math.max(...lngList) - Math.min(...lngList));
-        // 위도 경도 -> 거리 환산
-        latDist *= 88740;
-        lngDist *= 88740;
-        // 화면비율에 맞춰 최종 거리값 산출
-        const distance = Math.max(latDist / 8.6, lngDist / 4);
-        // 확대 레벨 값
-        let distLevel = 0;
-
-        // 화면에 맞춰서 지도 확대 되도록 세팅
-        distLevel = zoomCalc(distance);
-
-        // 옵션 최종입력
-        var mapOption = {
-            center: new kakao.maps.LatLng(latMid, lngMid), // 지도의 중심좌표
-            level: distLevel, // 지도의 확대 레벨
-        };
-        // 완성된 값으로 지도 그리기
-        await mapRender(result, mapOption, positions);
-    }
-    // 검색결과 없음
-    else {
-        // 현위치에서 지도 초기화
-        mapInit(mapPosition);
-        storeList.innerHTML = `<div>검색결과가 없습니다.</div>`;
-    }
-}
 
 async function mapRender(result, mapOption, positions) {
     // 지도 생성
@@ -133,10 +135,8 @@ async function mapRender(result, mapOption, positions) {
         else if (item.congestion == "약간 붐빔") var imageSrc = '/img/warn.png';
         else if (item.congestion == "붐빔") var imageSrc = '/img/danger.png';
         else var imageSrc = '/img/default.png';
-        // 마커 이미지 크기
-        var imageSize = new kakao.maps.Size(18, 26);
         // 마커 이미지 생성
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, new kakao.maps.Size(18, 26));
 
         marker = new kakao.maps.Marker({
             map: map, // 마커를 표시할 지도
@@ -151,7 +151,6 @@ async function mapRender(result, mapOption, positions) {
         kakao.maps.event.addListener(marker, 'click', makeOverListener(map, marker));
         mapContainer.addEventListener('touchend', touchStartListener());
     });
-
     // getColor();
 
     // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
@@ -163,7 +162,8 @@ async function mapRender(result, mapOption, positions) {
                 tempLat = '',
                 tempLng = '',
                 tempUrl = '',
-                tempTel = '';
+                tempTel = '',
+                tempLike = false;
             result.map((item) => {
                 if (item.storeIdx == marker.Gb) {
                     tempAddr = item.storeNewAddr;
@@ -171,6 +171,7 @@ async function mapRender(result, mapOption, positions) {
                     tempLng = item.storeLon;
                     tempUrl = item.storeUrl;
                     tempTel = item.storeTel;
+                    tempLike = item.likeResult;
                     return;
                 }
             });
@@ -180,40 +181,16 @@ async function mapRender(result, mapOption, positions) {
                     storeIdx: marker.Gb,
                     storeNewAddr: tempAddr,
                 })
-            let star = '';
+            var star = '';
             if (sessionResult === '') {
                 star = ``;
-            } else if (result2.likeResult) {
-                star = `<img class="align-top align-end" src="/img/star-fill.svg"  alt="star"/>`;
             } else {
-                star = `<img class="align-top align-end" src="/img/star.svg"  alt="star"/>`;
+                console.log(result2.likeResult)
+                star = getLike(result2.likeResult);
             }
 
             // 음식점 정보 플로팅 띄우기
-            //
-            floatingInfo.innerHTML = `
-                        <div class='shadow-sm card custom_zoomcontrol'
-                        style="bottom: calc(3.5rem + 11%); width:95%">
-                            <div class="card-body w-100">
-                                <div class="row">
-                                    <div class="col-9">
-                                        <h6 class="card-title text-start fw-bold">${result2.storeName}</h6>
-                                    </div>
-                                    <div class="col-auto" style="margin-left: auto; margin-right:0">
-                                    <a id="starBtn" onclick="dataSend(this)" data-name="${tempAddr}" data-store="${result2.storeName}">
-                                        ${star}</a>
-                                    </div>
-                                    <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
-                                        <a onclick="if(${!!tempUrl}) {document.getElementById('framesrc').src='${tempUrl}'; document.querySelector('#myModal').style.display = 'block'}">
-                                            <img class="align-top text-end" src="/img/box-arrow-up-right.svg" style="width: 1.2rem; " alt="outerLink">
-                                        </a>
-                                    </div>
-                                </div>
-                                <p class="card-text text-start text-truncate" style="font-size:0.8rem; margin-bottom: 0.375rem">${tempAddr.substring(5)}</p>
-                                <p class="card-text text-start text-truncate" style="font-size:0.8rem">${tempTel}</p>
-                            </div>
-                        </div>
-                    `;
+            floatingInfo.innerHTML = floatInfo (result2.storeName, tempAddr, star, tempUrl, tempTel);
 
             const starBtn = document.getElementById('starBtn');
             starBtn.innerHTML = star;
@@ -240,10 +217,27 @@ async function mapRender(result, mapOption, positions) {
     // 오프캔버스에 검색결과 출력
     storeList.innerHTML = '';
     storeList.innerHTML = result.reduce((acc, item) => {
+        var congestion = null;
+        if (item.predictCongestion != null) congestion = item.predictCongestion
+        else if (item.storeCongestion != null) congestion = item.storeCongestion;
+        else congestion = '미제공'
         return acc += `
                 <div class="card mb-3" data-no="${item.storeIdx}">
                     <div class="card-header">
-                        ${item.storeName}
+                        <div class="row justify-content-between">
+                            <div class="col-7">
+                                <a onclick="
+                                map.setCenter(new kakao.maps.LatLng(${item.storeLat}, ${item.storeLon}));
+                                map.setLevel(3);
+                                $('#offcanvasExample').offcanvas('hide');
+                                const star = getLike(${item.likeResult});
+                                floatingInfo.innerHTML = floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}');
+                                ">
+                                    ${item.storeName}
+                                </a>
+                            </div>
+                            ${colorPicker(congestion, congestion)}
+                        </div>
                     </div>
                     <div class="card-body">
                         <blockquote class="blockquote mb-0">
@@ -251,8 +245,75 @@ async function mapRender(result, mapOption, positions) {
                         </blockquote>
                     </div>
                 </div>
-                `;
+            `;
     }, "");
+}
+
+function getLike (likeResult) {
+    if (likeResult) return `<img class="align-top align-end" src="/img/star-fill.svg"  alt="star"/>`;
+    else return `<img class="align-top align-end" src="/img/star.svg"  alt="star"/>`;
+}
+
+function colorPicker(element, state) {
+    if (state === '붐빔') {
+    return `
+            <div class="col-auto text-center"
+                 style="background-color: #fc5230; color:white; line-height: 1.6rem; border-radius: 4px; width:23vw">
+                <a style="font-size: 0.9rem; transform: rotate(0.04deg)">${element}</a>
+            </div>`
+    } else if (state === '약간 붐빔') {
+        return `
+            <div class="col-auto text-center"
+                 style="background-color: #fd9f28; color:white; line-height: 1.6rem; border-radius: 4px; width:23vw">
+                <a style="font-size: 0.9rem; transform: rotate(0.04deg)">${element}</a>
+            </div>`
+    } else if (state === '보통') {
+        return `
+            <div class="col-3 text-center"
+                 style="background-color: #7db249; color:white; line-height: 1.6rem; border-radius: 4px; width:23vw">
+                <a style="font-size: 0.9rem; transform: rotate(0.04deg)">${element}</a>
+            </div>`
+    } else if (state === '여유') {
+        return `
+            <div class="col-3 text-center"
+                 style="background-color: #1960ef; color:white; line-height: 1.6rem; border-radius: 4px; width:23vw">
+                <a style="font-size: 0.9rem; transform: rotate(0.04deg)">${element}</a>
+            </div>`
+    } else {
+        return `
+            <div class="col-3 text-center"
+                 style="background-color: #595959; color:white; line-height: 1.6rem; border-radius: 4px; width:23vw">
+                <a style="font-size: 0.9rem; transform: rotate(0.04deg)">미제공</a>
+            </div>
+            `
+    }
+}
+
+// 플로팅 창 내용 넣기
+function floatInfo (storeName, addr, star, url, tel) {
+    return `
+    <div class='shadow-sm card custom_zoomcontrol'
+        style="bottom: calc(3.5rem + 11%); width:95%">
+        <div class="card-body w-100">
+            <div class="row">
+                <div class="col-9">
+                    <h6 class="card-title text-start fw-bold">${storeName}</h6>
+                </div>
+                <div class="col-auto" style="margin-left: auto; margin-right:0">
+                <a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">
+                    ${star}</a>
+                </div>
+                <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
+                    <a onclick="if(${!!url}) {document.getElementById('framesrc').src='${url}'; document.querySelector('#myModal').style.display = 'block'}">
+                        <img class="align-top text-end" src="/img/box-arrow-up-right.svg" style="width: 1.2rem; " alt="outerLink">
+                    </a>
+                </div>
+            </div>
+            <p class="card-text text-start text-truncate" style="font-size:0.8rem; margin-bottom: 0.375rem">${addr.substring(5)}</p>
+            <p class="card-text text-start text-truncate" style="font-size:0.8rem">${tel}</p>
+        </div>
+    </div>
+    `
 }
 
 // 확대레벨로 현재화면의 거리값 계산
@@ -325,11 +386,10 @@ async function dataSend(element) {
 // 모피어스에서 현위치 지정하기
 function getCurrentLocation () {
     getLocation().then(result => {
-        marker.setMap(null);
+        if(marker.Ba != undefined) marker.setMap(null);
         // GeoLocation을 이용해서 접속 위치를 얻어옵니다
         let lat = result.coords.latitude, // 위도
             lon = result.coords.longitude// 경도
-
         var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
 
         // 마커와 인포윈도우를 표시합니다
@@ -337,6 +397,7 @@ function getCurrentLocation () {
             map: map,
             position: locPosition
         });
+
         // 지도 중심좌표를 접속위치로 변경합니다
         map.setCenter(locPosition);
 
@@ -359,3 +420,10 @@ getHere.addEventListener('click', () => {
         }
     }
 )
+
+function newMapOption(lat, lon, level) {
+    return {
+        center: new kakao.maps.LatLng(lat, lon), // 지도의 중심좌표
+        level: level, // 지도의 확대 레벨
+    };
+}
