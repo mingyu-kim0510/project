@@ -30,10 +30,8 @@ public class StoreServiceImpl implements StoreService {
             final Double MAP_DIST_LNG = dto.getIntervals() * 6;
 
             var storesInLocation = storeRepository.findByStoreLatBetweenAndStoreLonBetween(
-                    dto.getLon() - MAP_DIST_LNG,
-                    dto.getLon() + MAP_DIST_LNG,
-                    dto.getLat() - MAP_DIST_LAT,
-                    dto.getLat() + MAP_DIST_LAT)
+                    dto.getLon() - MAP_DIST_LNG,dto.getLon() + MAP_DIST_LNG,
+                    dto.getLat() - MAP_DIST_LAT,dto.getLat() + MAP_DIST_LAT)
                     .stream()
                     .filter(i -> i.getStoreName().contains(dto.getSearchVal())
                             || i.getStoreAddr().contains(dto.getSearchVal())
@@ -60,6 +58,11 @@ public class StoreServiceImpl implements StoreService {
                 .filter(i -> i.getStoreCategory().contains(dto.getCategory1())
                         && i.getStoreCategory().contains(dto.getCategory2())
                         && i.getStoreCategory().contains(dto.getCategory3()));
+        if (dto.getIsPeopleApi() == 2) {
+            storesByCategory = storesByCategory.filter(i -> i.getDistrictEntity() != null && i.getDistrictEntity().getDistDensity().equals("여유"));
+        } else if (dto.getIsPeopleApi() == 1) {
+            storesByCategory = storesByCategory.filter(i -> i.getDistrictEntity() != null);
+        }
         List<StoreResDto> temp2 = new ArrayList<>();
         storesByCategory.forEach(item -> temp2.add(item.toStoreResDto(0)));
         return temp2;

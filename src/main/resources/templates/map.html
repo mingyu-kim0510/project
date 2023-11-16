@@ -215,10 +215,6 @@
             checked
             data-name=""
     />
-    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="display:none; width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="likeBtn" id="likeLabel">
-        <img src="/img/star-fill.svg" alt="like">
-    </label>
-    <input type="button" class="btn" id="likeBtn" style="margin-left:0.75rem"/>
 </div>
 <!-- 옵션 콜랩스 -->
 <div class="collapse extra_collapse w-100" id="collapseExample">
@@ -239,17 +235,29 @@
                 <option value="주점" style="transform:rotate(0.04deg)">주점</option>
                 <option value="비건" style="transform:rotate(0.04deg)">비건</option>
             </select>
-
-            <div class="mb-4 fw-bold h4" style="transform:rotate(0.04deg)">표시옵션</div>
-            <div class="btn-group w-100" role="group" aria-label="Basic radio toggle button group">
-                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                <label class="btn btn-outline-primary w-100" for="btnradio1">-</label>
+            <div class="row justify-content-between">
+                <div class="col-auto">
+                    <div class="mb-4 fw-bold h4" style="vertical-align: middle; transform:rotate(0.04deg)">표시옵션</div>
+                </div>
+                <div class="col-auto">
+                    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="display:none; width: 3rem; margin-right:0; transform:rotate(0.04deg); font-weight: bold" for="likeBtn" id="likeLabel">
+                        <img src="/img/star-fill.svg" style="width:1rem" alt="like">
+                    </label>
+                    <input type="button" class="btn" id="likeBtn"/>
+                    <button type="button" class="btn btn-sm btn-light shadow-sm rounded-pill" id="reRenderBtn2">
+                        <a style="transform:rotate(0.04deg); font-weight: bold">이 지역에서 검색</a>
+                    </button>
+                </div>
+            </div>
+            <div role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="allToggle" autocomplete="off" checked>
+                <label class="btn btn-outline-secondary" id="allToggleLabel" style='width:32%;' for="allToggle">전체</label>
 
                 <input type="radio" class="btn-check" name="btnradio" id="apiToggle" autocomplete="off">
-                <label class="btn btn-outline-primary w-100" for="apiToggle">API</label>
+                <label class="btn btn-outline-warning" id="apiToggleLabel" style="width:32%;border:1px solid #6c757d; color: #6c757d" for="apiToggle">인구데이터</label>
 
                 <input type="radio" class="btn-check" name="btnradio" id="safeToggle" autocomplete="off">
-                <label class="btn btn-outline-primary w-100" for="safeToggle">여유</label>
+                <label class="btn btn-outline-primary" id="safeToggleLabel" style="width:32%;border:1px solid #6c757d; color: #6c757d" for="safeToggle">여유</label>
             </div>
         </div>
     </div>
@@ -287,7 +295,7 @@
     <img src="/img/target.png" style="width:2.3rem" alt="circle">
 </a>
 
-<!-- 검색결과 (오프캔버스 하단) -->
+<!-- 검색결과 (오프 캔버스 하단) -->
 <div
         class="offcanvas offcanvas-bottom"
         tabindex="-1"

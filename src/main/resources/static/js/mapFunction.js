@@ -231,6 +231,8 @@ async function mapRender(result, mapOption, positions) {
                                 map.setLevel(3);
                                 $('#offcanvasExample').offcanvas('hide');
                                 const star = getLike(${item.likeResult});
+                                // 음식점 정보 none -> block
+                                floatingInfo.style.display = 'block';
                                 floatingInfo.innerHTML = floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}');
                                 ">
                                     ${item.storeName}
@@ -343,7 +345,6 @@ function distCalc(zoomLevel) {
             return 16000;
     }
 }
-
 // 검색 결과로 보여질 지도의 확대 값 계산하기
 function zoomCalc(distance) {
     if (distance > 4000) {
@@ -420,10 +421,43 @@ getHere.addEventListener('click', () => {
         }
     }
 )
-
 function newMapOption(lat, lon, level) {
     return {
         center: new kakao.maps.LatLng(lat, lon), // 지도의 중심좌표
         level: level, // 지도의 확대 레벨
     };
 }
+
+// 검색 옵션 디자인 변경 함수
+const allToggle = document.getElementById('allToggle');
+const allToggleLabel = document.getElementById('allToggleLabel');
+const apiToggleLabel = document.getElementById('apiToggleLabel');
+const safeToggleLabel = document.getElementById('safeToggleLabel');
+
+allToggle.addEventListener('click',() => {
+    apiToggleLabel.style.borderTop = '0';
+    allToggleLabel.style.border = '1px solid #6c757d';
+    allToggleLabel.style.color = 'white';
+    safeToggleLabel.style.border = '1px solid #6c757d';
+    safeToggleLabel.style.color = '#6c757d';
+    apiToggleLabel.style.border = '1px solid #6c757d';
+    apiToggleLabel.style.color = '#6c757d';
+})
+apiToggle.addEventListener('click', ()=>{
+    apiToggleLabel.style.borderTop = '0';
+    apiToggleLabel.style.border = '1px solid #ffc107';
+    apiToggleLabel.style.color = 'white';
+    safeToggleLabel.style.border = '1px solid #ffc107';
+    safeToggleLabel.style.color = '#ffc107';
+    allToggleLabel.style.border = '1px solid #ffc107';
+    allToggleLabel.style.color = '#ffc107';
+})
+safeToggle.addEventListener('click', ()=>{
+    apiToggleLabel.style.borderTop = '0';
+    safeToggleLabel.style.border = '1px solid #0d6efd';
+    safeToggleLabel.style.color = 'white';
+    apiToggleLabel.style.border = '1px solid #0d6efd';
+    apiToggleLabel.style.color = '#0d6efd';
+    allToggleLabel.style.border = '1px solid #0d6efd';
+    allToggleLabel.style.color = '#0d6efd';
+})
