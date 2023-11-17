@@ -9,6 +9,7 @@ const floatingInfo = document.getElementById('floatingInfo'); // 음식점 정�
 const offcanvas = document.getElementById('offcanvasExample'); // 오프캔버스 id
 const collapse = document.querySelector('.collapse'); // 콜래스 클래스
 const reRenderBtn = document.getElementById('reRenderBtn'); // 지역 내 재검색 버튼
+const reRenderBtn2 = document.getElementById('reRenderBtn2'); // 지역 내 재검색 버튼
 const getHere = document.getElementById('getHere'); // 현위치 버튼
 const timeBtn = document.getElementById('timeBtn'); // 혼잡도 예측 버특
 const likeBtn = document.getElementById('likeBtn');
@@ -82,15 +83,15 @@ searchVal.addEventListener('keypress', async function search(e) {
 
         // request
         let result = await postFetcher('/api/store/list', {
-                searchVal: searchVal.value,
-                category1: category1,
-                category2: category2.value,
-                category3: category3.value,
-                isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
+            searchVal: searchVal.value,
+            category1: category1,
+            category2: category2.value,
+            category3: category3.value,
+            isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
         })
 
         // 검색 결과로 맵핀 계산
-        await mapCalc(result,'',null);
+        await mapCalc(result,null,null);
     }
 });
 // 지역내 재검색
@@ -115,7 +116,32 @@ reRenderBtn.addEventListener('click', async () => {
         intervals: intervals,
         isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
     });
-    await mapCalcRevised(result, false, 0);
+    await mapCalc(result, false, 0);
+});
+
+reRenderBtn2.addEventListener('click', async () => {
+    // 검색기능 수행 전 스피너 띄우기
+    spinner();
+
+    const intervals = distCalc(map.getLevel()) * 0.00001126887;
+
+    // category1 값 가져오기
+    category1List.forEach(item => {
+        if (item.checked) category1 = item.dataset.name;
+    });
+    // request
+    let result = await postFetcher('/api/store/list',{
+        searchVal: searchVal.value,
+        category1: category1,
+        category2: category2.value,
+        category3: category3.value,
+        lat: map.getCenter().La,
+        lon: map.getCenter().Ma,
+        intervals: intervals,
+        isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
+    });
+    await mapCalc(result, false, 0);
+    $('#collapseExample').collapse('hide');
 });
 
 // 타임 버튼
@@ -132,7 +158,7 @@ likeBtn.addEventListener('click', async ()=>{
         const result = data.filter(item => item.storeCongestion != null)
         await mapCalc(result, null, null);
     } else if (safeToggle.checked) {
-        const result = data.filter(item => item.storeCongestion == "여유")
+        const result = data.filter(item => item.storeCongestion === "여유")
         await mapCalc(result, null, null);
     } else {
         await mapCalc(data, null, null);

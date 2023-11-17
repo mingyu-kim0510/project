@@ -86,7 +86,15 @@
   })
 
   saveBtn.addEventListener('click', async () => {
-    await postFetcher('/modify',{ userId: modalUserName.value });
+    await fetch('/modify', {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            userId: modalUserName.value
+          })
+        });
     userName.innerHTML = modalUserName.value;
   })
 
