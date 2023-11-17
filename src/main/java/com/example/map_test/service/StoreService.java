@@ -13,4 +13,6 @@ public interface StoreService {
 
     StoreResDto findOne(Long storeIdx);
 
+
+
 }

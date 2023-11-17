@@ -1,8 +1,12 @@
 package com.example.map_test.service;
 
 import com.example.map_test.apis.PeopleApi;
+import com.example.map_test.dto.DistrictColorResDto;
+import com.example.map_test.dto.PeopleResDto;
+import com.example.map_test.entity.DistrictEntity;
 import com.example.map_test.repository.PeopleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +54,15 @@ public class PeopleServiceImpl implements PeopleService{
             peopleRepository.save(entity);
         });
         System.out.println("forEach end...");
+    }
+
+    @Override
+    public List<DistrictColorResDto> getColor() {
+        List<DistrictEntity> temp = peopleRepository.findAll();
+        List<DistrictColorResDto> colorList = new ArrayList<>();
+        for(DistrictEntity item : temp) {
+            colorList.add(item.toColorDto());
+        }
+        return colorList;
     }
 }

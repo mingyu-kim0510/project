@@ -61,6 +61,18 @@ public class StoreEntity {
     private DistrictEntity districtEntity;
 
     public StoreResDto toStoreResDto () {
+        if(this.districtEntity == null) {
+            return StoreResDto.builder()
+                    .storeIdx(storeIdx)
+                    .storeName(storeName)
+                    .storeNewAddr(storeNewAddr)
+                    .storeUrl(storeUrl)
+                    .storeLat(storeLat)
+                    .storeLon(storeLon)
+                    .storeCategory(storeCategory)
+                    .storeCategory2(storeCategory2)
+                    .build();
+        }
         return StoreResDto.builder()
                 .storeIdx(storeIdx)
                 .storeName(storeName)
@@ -70,6 +82,7 @@ public class StoreEntity {
                 .storeLon(storeLon)
                 .storeCategory(storeCategory)
                 .storeCategory2(storeCategory2)
+                .storeDist(districtEntity.getDistIdx())
                 .build();
     }
 }

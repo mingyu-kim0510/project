@@ -21,8 +21,6 @@ import java.util.List;
 public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
-    private final PeopleApi peopleApi;
-    private final PeopleRepository peopleRepository;
 
     // 옵션 검색기능
     @Override
@@ -30,7 +28,6 @@ public class StoreServiceImpl implements StoreService {
         if (dto.getLon() != null) {
             final Double MAP_DIST_LAT = dto.getIntervals() * 3;
             final Double MAP_DIST_LNG = dto.getIntervals() * 6;
-            System.out.println(MAP_DIST_LAT);
             var temp = findStoreListinLocation
                     (dto.getSearchVal(),
                             dto.getCategory1(),

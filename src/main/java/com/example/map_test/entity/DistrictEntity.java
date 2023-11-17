@@ -1,5 +1,7 @@
 package com.example.map_test.entity;
 
+import com.example.map_test.dto.DistrictColorResDto;
+import com.example.map_test.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,5 +43,9 @@ public class DistrictEntity {
     @OneToMany(mappedBy = "districtEntity", fetch = FetchType.LAZY)
     private List<StoreEntity> storeEntityList = new ArrayList<>();
 
-
+    public DistrictColorResDto toColorDto () {
+        return DistrictColorResDto.builder()
+                .color(distDensity)
+                .build();
+    }
 }

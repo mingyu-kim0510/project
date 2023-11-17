@@ -19,12 +19,11 @@ public interface UserService {
     void modify(String originalName, UserDto dto);
 
     default UserEntity dtoToEntity(UserDto dto){
-        UserEntity entity = UserEntity.builder()
+        return UserEntity.builder()
                 .userIdx(dto.getUserIdx())
                 .userId(dto.getUserId())
                 .userPw(dto.getUserPw())
                 .build();
-        return entity;
     }
 
 

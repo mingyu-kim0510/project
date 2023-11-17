@@ -13,7 +13,9 @@ function mapInit(mapPosition) {
         center: new kakao.maps.LatLng(mapLat, mapLng), // 지도의 중심좌표
         level: 5, // 지도의 확대 레벨
     };
+
     map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
 }
 
 // 스피너 표기
@@ -33,6 +35,11 @@ async function mapCalc(result, mapPosition) {
         // 지도 내용 초기화
         mapContainer.innerHTML = '';
 
+        // 혼잡도 정보 가져오기
+        const response = await fetch('/api/color',{method: 'post'})
+        let colorList = await response.json();
+        colors = colorList.map((item, i) => {return item.color})
+
         // 핀 위치, 중심좌표 지정
         let positions = [],
             latList = [],
@@ -41,7 +48,8 @@ async function mapCalc(result, mapPosition) {
             positions.push({
                 title: item.storeName,
                 storeIdx: item.storeIdx,
-                latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon))
+                latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                congestion: colors[item.storeDist - 1]
             });
             latList.push(parseFloat(item.storeLat));
             lngList.push(parseFloat(item.storeLon));
@@ -80,21 +88,24 @@ async function mapCalc(result, mapPosition) {
     }
 }
 
-function mapRender(result, mapOption, positions) {
+async function mapRender(result, mapOption, positions) {
     // 지도 생성
     map = new kakao.maps.Map(mapContainer, mapOption);
-
-    // 마커 이미지 주소
-    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-
-    // 마커 이미지 크기
-    var imageSize = new kakao.maps.Size(24, 35);
-
-    // 마커 이미지 생성
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
-
-    // for (var i = 0; i < positions.length; i++) {
+    console.log(positions)
     positions.map(item => {
+        console.log(item.congestion)
+        if(item.congestion == "여유") {
+            var imageSrc = '/img/safe.png';
+        }
+        else if (item.congestion == "보통") var imageSrc = '/img/good.png';
+        else if (item.congestion == "약간 붐빔") var imageSrc = '/img/warn.png';
+        else if (item.congestion == "혼잡") var imageSrc = '/img/danger.png';
+        else var imageSrc = '/img/default.png';
+        // 마커 이미지 크기
+        var imageSize = new kakao.maps.Size(24, 35);
+        // 마커 이미지 생성
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
         marker = new kakao.maps.Marker({
             map: map, // 마커를 표시할 지도
             position: item.latlng, // 마커를 표시할 위치
@@ -108,6 +119,8 @@ function mapRender(result, mapOption, positions) {
         kakao.maps.event.addListener(marker, 'click', makeOverListener(map, marker));
         mapContainer.addEventListener('touchend', touchStartListener());
     });
+
+    // getColor();
 
     // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
     function makeOverListener(map, marker) {
@@ -161,7 +174,7 @@ function mapRender(result, mapOption, positions) {
                             <div class="card-body w-100">
                                 <div class="row">
                                     <div class="col-8">
-                                        <h6 class="card-title text-start fw-bold">${result2.storeName}</h6>
+                                        <h6 class="card-title text-start fw-bold">${result2.storeName} - ${marker.Gb}</h6>
                                     </div>
                                     <div class="col-auto">
                                     <a id="starBtn" onclick="dataSend(this)" data-name="${tempAddr}" data-store="${result2.storeName}">
@@ -169,7 +182,7 @@ function mapRender(result, mapOption, positions) {
                                     </div>
                                     <div class="col-auto text-end align-end">
                                         <a onclick="if(${isTempUrl}) location.href='${tempUrl}'">
-                                            <img class="align-top" src="/img/box-arrow-up-right.svg" style="width: 1.2rem" alt="outerLink">
+                                            <img class="align-top" src="/img/clipboard.svg" style="width: 1.2rem" alt="outerLink">
                                         </a>
                                     </div>
                                 </div>
@@ -189,6 +202,7 @@ function mapRender(result, mapOption, positions) {
             // 지도 중심을 부드럽게 이동시킵니다
             // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
             map.panTo(moveLatLon);
+            navigator.clipboard.writeText(marker.Gb+', ');
         };
     }
 

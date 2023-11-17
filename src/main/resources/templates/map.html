@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<script
+        type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=452c7ddc8ed8a9dd0f1f2a182fe1303f"
+></script>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Document</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+            crossorigin="anonymous"
+    />
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+            crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css">
+    <style>
+        body {
+            font-family: 'NanumSquareExtraBold';
+        }
+        .custom_zoomcontrol {
+            position: absolute;
+            bottom: calc(2.5rem + 5%);
+            left: 50%;
+            overflow: hidden;
+            z-index: 1;
+            transform: translate(-50%, 0%);
+        }
+        .search_control {
+            position: absolute;
+            overflow: hidden;
+            z-index: 3;
+            transform: translate(0, 0%);
+        }
+        .switch_control {
+            position: absolute;
+            top: 8rem;
+            left: 0.75rem;
+            overflow: hidden;
+            z-index: 3;
+            transform: translate(0, 0%);
+        }
+        .optionBtn_control {
+            position: absolute;
+            overflow: hidden;
+            top: 2rem;
+            left: 1.5rem;
+            z-index: 3;
+            transform: translate(0, 0%);
+        }
+        .extra_collapse {
+            position: absolute;
+            overflow: hidden;
+            z-index: 2;
+        }
+        .form-control:focus {
+            border: 2px solid #86b7fe;
+            box-shadow: none;
+        }
+        .scroll_content {
+            -ms-overflow-style: none;
+            position: absolute;
+            white-space: nowrap;
+            top: 5.375rem;
+            left: 0;
+            right: 0;
+            height: 3rem;
+            touch-action: pan-x;
+            z-index: 3;
+            overflow-x: auto;
+        }
+
+        .scroll_content::-webkit-scrollbar {
+            display: none;
+        }
+        .scroll-btn-control {
+            border: 2px solid #86b7fe;
+        }
+    </style>
+</head>
+<body>
+<!-- 검색 -->
+<div class="container-fluid my-2 search_control">
+    <input
+            type="text"
+            id="searchVal"
+            onkeyup="if(window.event.keyCode==13){ this.blur()}"
+            class="form-control form-control-lg"
+            style="margin-top: 1rem; padding-left: 2.5rem"
+    />
+</div>
+<!-- 상단 옵션버튼 -->
+<div class="optionBtn_control">
+    <a
+            data-bs-toggle="collapse"
+            href="#collapseExample"
+            role="button"
+            aria-expanded="false"
+            aria-controls="collapseExample"
+            id="listBtn"
+            class="align-middle"
+    >
+        <img style="width: 1.5rem" src="/img/list.svg" alt="옵션" />
+    </a>
+</div>
+<div class="scroll_content" id="category1">
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            name="options"
+            style="touch-action: pan-x; margin-left:0.75rem;"
+            id="option1"
+            checked
+            data-name=""
+    />
+    <label
+            class="btn btn-sm btn-light rounded-pill shadow-sm scroll-btn-control me-3"
+            style="width: 5rem; touch-action: pan-x; margin-left:0.75rem;"
+            for="option1"
+    >전체</label
+    >
+
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            name="options"
+            id="option2"
+            autocomplete="off"
+            data-name="한식"
+    />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem" for="option2">한식</label>
+
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            name="options"
+            id="option3"
+            autocomplete="off"
+            data-name="중식"
+    />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem" for="option3">중식</label>
+
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            name="options"
+            id="option4"
+            autocomplete="off"
+            data-name="일식"
+    />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem" for="option4">일식</label>
+
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            name="options"
+            id="option5"
+            autocomplete="off"
+            data-name="서양식"
+    />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem" for="option5">서양식</label>
+
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            name="options"
+            id="option6"
+            autocomplete="off"
+            data-name="아시아"
+    />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem" for="option6">아시아</label>
+
+    <input
+            type="radio"
+            class="btn-check scroll_control"
+            style="margin-right: 0.75rem"
+            name="options"
+            id="option7"
+            autocomplete="off"
+            data-name="할랄"
+    />
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; margin-right: 0.75rem; box-shadow: 0.5rem .5rem .5rem .5rem rgb(128,128,128)" for="option7">할랄</label>
+</div>
+<button type="button" class="btn btn-sm btn-light switch_control shadow rounded-pill" id="reRenderBtn" style="">
+    이 지역에서 검색
+</button>
+<!-- 옵션 콜랩스 -->
+<div class="collapse extra_collapse w-100" id="collapseExample">
+    <div class="card card-body w-100" style="background-color: #FCA56F; border: none;">
+        <div class="mb-3 w-100" style="margin-top: 4.375rem">
+            <div>&nbsp;</div>
+
+            <div>
+                <div class="mb-5">&nbsp;</div>
+                <div class="mb-4 fw-bold h4">세부설정</div>
+                <hr class="my-4" />
+            </div>
+
+            <select class="form-select mb-3" id="category2" aria-label="Large select example">
+                <option selected value="">전체</option>
+                <option value="구이">구이</option>
+                <option value="해산물">해산물</option>
+            </select>
+            <select class="form-select mb-3" id="category3" aria-label="Large select example">
+                <option selected value="">전체</option>
+                <option value="카페">카페</option>
+                <option value="디저트">디저트</option>
+                <option value="주점">주점</option>
+                <option value="비건">비건</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- 지도 -->
+<div id="map" style="position: relative; overflow: hidden; width: 100%; height: calc(100vh - 3.7rem)"></div>
+<div class="text-center">
+    <div id="floatingInfo" class="row text-center">
+        <!-- 음식점 정보 플로팅 위치 -->
+    </div>
+    <button
+            type="button"
+            class="custom_zoomcontrol btn btn-light btn-sm mt-3"
+            style="border: 1px solid rgb(210, 210, 210); border-radius: 2rem"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasExample"
+            aria-controls="offcanvasExample"
+    >
+        <img class="align-top" src="/img/list.svg" style="width: 1.2rem" alt="리스트" /><a
+            style="font-weight: bold"
+    >
+        목록 보기&nbsp;</a
+    >
+    </button>
+</div>
+
+<a type="button" class="btn btn-light btn-sm py-2 ps-2 pe-2 rounded-circle shadow" id="getHere"
+   style="
+       position: absolute;
+       z-index: 5;
+       bottom: 5.375rem;
+       right: 1rem;
+">
+    <img src="/img/target.png" style="width:2.3rem" alt="circle">
+</a>
+
+<!-- 검색결과 (오프캔버스 하단) -->
+<div
+        class="offcanvas offcanvas-bottom"
+        tabindex="-1"
+        id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel"
+        style="height: 60%"
+>
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">검색 결과</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div id="innerList">
+            <div>검색어를 입력해주세요</div>
+            <!-- 오프캔버스 내용 -->
+        </div>
+    </div>
+</div>
+
+
+<div id="menuBar"></div>
+<script src="/js/menuBar.js"></script>
+<script src="/js/map.js"></script>
+<script src="/js/mcore.min.js"></script>
+</body>
+<script>
+    /*
+     * 상수, 변수 시작
+     * */
+    const category1List = document.querySelectorAll('.scroll_control'); // category1의 버튼들
+    const mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    const searchVal = document.getElementById('searchVal'); // 검색값
+    const storeList = document.getElementById('innerList'); // 검색결과 내용 리스트
+    const floatingInfo = document.getElementById('floatingInfo'); // 음식점 정보 플로팅
+    const offcanvas = document.getElementById('offcanvasExample'); // 오프캔버스 id
+    const collapse = document.querySelector('.collapse'); // 콜래스 클래스
+    const reRenderBtn = document.getElementById('reRenderBtn'); // 지역 내 재검색 버튼
+    const getHere = document.getElementById('getHere'); // 현위치 버튼
+    var map = new kakao.maps.Map(mapContainer, {
+            center: new kakao.maps.LatLng(37.554842, 126.9717319), // 지도의 중심좌표
+            level: 5, // 지도의 확대 레벨
+        });
+    var category1 = '';
+    const category2 = document.getElementById('category2');
+    const category3 = document.getElementById('category3');
+    var marker = {};
+    /*
+     * 상수, 변수 끝
+     * */
+    // 모피어스에서 현위치 지정하기
+    function getCurrentLocation () {
+        getLocation().then(result => {
+            marker.setMap(null);
+            // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+            let lat = result.coords.latitude, // 위도
+                lon = result.coords.longitude// 경도
+
+            var locPosition = new kakao.maps.LatLng(lat, lon) // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+            // 마커와 인포윈도우를 표시합니다
+            marker = new kakao.maps.Marker({
+                map: map,
+                position: locPosition
+            });
+            // 지도 중심좌표를 접속위치로 변경합니다
+            map.setCenter(locPosition);
+
+        })
+    }
+    function getLocation () {
+        return new Promise((resolve) => {
+            M.plugin('location').current({
+                timeout:10000,
+                maximumAge: 1,
+                callback(result) {
+                    resolve(result);
+                },
+            });
+        });
+    }
+
+
+    getHere.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                getCurrentLocation()
+            }
+        }
+    )
+    window.onload = async () => {
+        // 지역 폴리곤 불러오기
+    const sessionCheck = await fetch('/api/map')
+    const sessionresult = await sessionCheck.text();
+    console.log(sessionresult);
+    if (sessionresult != "") {
+        category1 = sessionresult;
+        // 검색기능 수행 전 스피너
+        spinner();
+
+        // 오프캔버스 창 열기
+        var bootstrapOffcanvas = new bootstrap.Offcanvas(offcanvas);
+        bootstrapOffcanvas.show();
+
+        // request
+        const response = await fetch('/api/store/list', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                searchVal: "",
+                category1: category1,
+                category2: "",
+                category3: "",
+            }),
+        });
+        await fetch('/api/map/init');
+        // 검색 결과
+        let result = await response.json();
+
+
+        // 검색 결과로 맵핀 계산
+        mapCalc(result);
+    }
+    }
+    // 검색바에서 검색 시
+    searchVal.addEventListener('keypress', async function search(e) {
+        if (e.key === 'Enter') {
+            // 검색기능 수행 전 스피너
+            spinner();
+
+            // 오프캔버스 창 열기
+            var bootstrapOffcanvas = new bootstrap.Offcanvas(offcanvas);
+            bootstrapOffcanvas.show();
+
+            // 검색값 공백 확인하기
+            if (searchVal.value === '') {
+                mapInit('');
+                storeList.innerHTML = `<div>검색어를 입력해주세요</div>`;
+                return;
+            }
+            // category1 값 가져오기
+            category1List.forEach(item => {
+                if (item.checked) category1 = item.dataset.name;
+            });
+
+            // request
+            const response = await fetch('/api/store/list', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    searchVal: searchVal.value,
+                    category1: category1,
+                    category2: category2.value,
+                    category3: category3.value,
+                }),
+            });
+            // 검색 결과
+            let result = await response.json();
+
+            // 검색 결과로 맵핀 계산
+            mapCalc(result);
+        }
+    });
+    // 지역내 재검색
+    reRenderBtn.addEventListener('click', async () => {
+        // 검색기능 수행 전 스피너 띄우기
+        spinner();
+
+        const lat = map.getCenter().La;
+        const lon = map.getCenter().Ma;
+        const intervals = distCalc(map.getLevel()) * 0.00001126887;
+
+        // category1 값 가져오기
+        category1List.forEach(item => {
+            if (item.checked) category1 = item.dataset.name;
+        });
+        // request
+        const response = await fetch('/api/store/list', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                searchVal: searchVal.value,
+                category1: category1,
+                category2: category2.value,
+                category3: category3.value,
+                lat: lat,
+                lon: lon,
+                intervals: intervals,
+
+            }),
+        });
+
+        let result = await response.json();
+        if (result.length !== 0) {
+            // 지도 내용 초기화
+            mapContainer.innerHTML = '';
+
+            // 혼잡도 정보 가져오기
+            const response = await fetch('/api/color',{method: 'post'})
+            let colorList = await response.json();
+            colors = colorList.map((item, i) => {return item.color})
+
+            // 핀 위치, 중심좌표 지정
+            let positions = [];
+            result.forEach(item => {
+                positions.push({
+                    title: item.storeName,
+                    storeIdx: item.storeIdx,
+                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
+                    congestion: colors[item.storeDist - 1]
+                });
+                console.log(item.storeDist)
+            });
+            var mapOption = {
+                center: new kakao.maps.LatLng(lon, lat), // 지도의 중심좌표
+                level: map.getLevel(), // 지도의 확대 레벨
+            };
+
+            mapRender(result, mapOption, positions);
+        }
+    });
+</script>
+</html>

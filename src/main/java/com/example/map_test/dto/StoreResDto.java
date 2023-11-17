@@ -19,5 +19,6 @@ public class StoreResDto {
     private String storeCategory;
     private String storeCategory2;
     private boolean likeResult;
+    private Long storeDist;
 
 }
