@@ -89,7 +89,7 @@ searchVal.addEventListener('keypress', async function search(e) {
             category2: category2.value,
             category3: category3.value,
             isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
-        })
+        });
 
         // 검색 결과로 맵핀 계산
         await mapCalc(result,null,null);
