@@ -286,7 +286,7 @@ function colorPicker(element, state) {
             <div class="col-3 text-center"
                  style="background-color: #595959; color:white; line-height: 1.6rem; border-radius: 4px; width:23vw">
                 <a style="font-size: 0.9rem; transform: rotate(0.04deg)">미제공</a>
-            </div>
+            </div> 
             `
     }
 }
