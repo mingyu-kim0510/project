@@ -27,12 +27,12 @@
                 <label for="userId" class="form-label">이메일 입력</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="userPw" name="userPw" placeholder="비밀번호">
+                <input type="password" class="form-control" onblur="pwChecker(this)" id="userPw" name="userPw" placeholder="비밀번호">
                 <label for="userPw" class="form-label">비밀번호</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="userPw2" name="userPw2" placeholder="비밀번호">
-                <label for="userPw2" class="form-label">비밀번호 확인</label>
+                <input type="password" class="form-control" onblur="pwChecker(this)" id="userPw2" name="userPw2" placeholder="비밀번호">
+                <label for="userPw2"  class="form-label">비밀번호 확인</label>
             </div>
             <div class="form-floating mt-5 mb-5">
                 <button type="submit" class="btn btn-primary w-100 btn-lg fw-bold" style="border: none; background-color: #FCA56F;">회원가입</button>
@@ -49,12 +49,15 @@
     const o = document.getElementById('userPw');
     const re = document.getElementById('userPw2');
     const pw = document.getElementById('pwChecker');
+    pw.innerHTML = '';
 
-    o.addEventListener('onblur', pwChecker);
-    re.addEventListener('onblur', pwChecker());
 
-    function pwChecker() {
-        if (o.value === re.value) {
+    function pwChecker(element) {
+        console.log(element.value)
+        if (o.value === '' || re.value === '') {
+            pw.innerHTML = '';
+        }
+        else if (o.value === re.value) {
             pw.innerHTML = '비밀번호가 일치합니다.';
         }
         else if (!o.value && !re.value) {
@@ -63,8 +66,6 @@
         else {
             pw.innerHTML = '비밀번호가 일치하지 않습니다.';
         }
-        console.log(re.value)
-        console.log(o.value)
     }
 </script>
 </body>

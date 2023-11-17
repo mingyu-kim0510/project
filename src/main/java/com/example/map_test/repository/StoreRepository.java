@@ -9,8 +9,7 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     Optional<StoreEntity> findByStoreNewAddrAndStoreName(String storeAddr, String storeName);
-
     Optional<StoreEntity> findByStoreIdx(Long idx);
-
     List<StoreEntity> findByStoreLatBetweenAndStoreLonBetween (Double latMin, Double latMax, Double lonMin, Double lonMax);
+    List<StoreEntity> findByDistrictEntityNotNull();
 }

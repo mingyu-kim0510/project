@@ -1,6 +1,7 @@
 package com.example.map_test.entity;
 
 
+import com.example.map_test.dto.DistrictResDto;
 import com.example.map_test.dto.StoreResDto;
 import com.example.map_test.dto.UserDto;
 import lombok.AllArgsConstructor;
@@ -59,6 +60,13 @@ public class StoreEntity {
     @ManyToOne
     @JoinColumn(name = "dist_idx")
     private DistrictEntity districtEntity;
+
+    public DistrictResDto toDistrictResDto(int filtered) {
+        return DistrictResDto.builder()
+                .districtName(districtEntity.getDistName())
+                .predictCongestion(districtEntity.getPredictEntityList().get(0).getPredictCongestion())
+                .storeCount(filtered).build();
+    }
 
     public StoreResDto toStoreResDto (int predictTime) {
         if(this.districtEntity == null) {

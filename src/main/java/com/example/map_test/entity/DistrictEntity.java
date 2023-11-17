@@ -1,6 +1,7 @@
 package com.example.map_test.entity;
 
 import com.example.map_test.dto.DistrictColorResDto;
+import com.example.map_test.dto.DistrictResDto;
 import com.example.map_test.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,5 +52,12 @@ public class DistrictEntity {
         return DistrictColorResDto.builder()
                 .color(distDensity)
                 .build();
+    }
+
+    public DistrictResDto toDistrictResDto(int filtered) {
+        return DistrictResDto.builder()
+                .districtName(distName)
+                .predictCongestion(predictEntityList.get(0).getPredictCongestion())
+                .storeCount(filtered).build();
     }
 }

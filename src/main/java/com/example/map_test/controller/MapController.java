@@ -1,6 +1,7 @@
 package com.example.map_test.controller;
 
 import com.example.map_test.dto.DistrictColorResDto;
+import com.example.map_test.dto.DistrictResDto;
 import com.example.map_test.dto.StoreReqDto;
 import com.example.map_test.dto.StoreResDto;
 import com.example.map_test.service.PeopleService;
@@ -55,5 +56,10 @@ public class MapController {
     @GetMapping("/map/init")
     public void initSession (HttpSession session) {
         session.setAttribute("option", "");
+    }
+
+    @PostMapping("/getPredictAll")
+    public List<DistrictResDto> getPredictAll() {
+        return peopleService.findStorePredictByDistrict();
     }
 }

@@ -1,9 +1,6 @@
 package com.example.map_test.service;
 
-import com.example.map_test.dto.PeopleResDto;
-import com.example.map_test.dto.StoreReqDto;
-import com.example.map_test.dto.StoreResDto;
-import com.example.map_test.dto.UserDto;
+import com.example.map_test.dto.*;
 
 import java.util.List;
 

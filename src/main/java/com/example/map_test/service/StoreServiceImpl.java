@@ -1,6 +1,7 @@
 package com.example.map_test.service;
 
 import com.example.map_test.apis.PeopleApi;
+import com.example.map_test.dto.DistrictResDto;
 import com.example.map_test.dto.PeopleResDto;
 import com.example.map_test.dto.StoreReqDto;
 import com.example.map_test.dto.StoreResDto;
@@ -21,6 +22,7 @@ import java.util.Objects;
 @Service
 public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
+    private final PeopleRepository peopleRepository;
     // 옵션 검색기능
     @Override
     public List<StoreResDto> findStore(StoreReqDto dto) {
@@ -77,13 +79,13 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public List<StoreResDto> findStorePredict(StoreReqDto dto, int predictTime) {
         // 인구데이터 구역 내 예측자료 제공 여부
-        var temp = storeRepository.findAll().stream()
-                .filter(i -> i.getDistrictEntity() != null
-                         && !i.getDistrictEntity().getPredictEntityList().isEmpty());
-
+        var temp = storeRepository.findByDistrictEntityNotNull().stream()
+                    .filter(i -> !i.getDistrictEntity().getPredictEntityList().isEmpty());
         List<StoreResDto> dtoList = new ArrayList<>();
         temp.forEach(item -> dtoList.add(item.toStoreResDto(1)));
         return dtoList;
     }
+
+
 
 }

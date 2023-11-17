@@ -16,14 +16,14 @@ import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("")
+@RequestMapping("/like")
 @RestController
 public class LikeController {
 
     private final LikeService likeService;
     private final StoreService storeService;
 
-    @PostMapping("/like")
+    @PostMapping("")
     public int like(@RequestBody favReqDto dto, HttpSession session) {
             var user = (String) session.getAttribute("user");
             if(user == null) {
@@ -34,7 +34,7 @@ public class LikeController {
     }
 
     // 해당 음식점 선택 시 찜 여부 리턴
-    @PostMapping("/getLike")
+    @PostMapping("/getOne")
     public StoreResDto getLike(@RequestBody favReqDto dto, HttpSession session) {
         var user = (String) session.getAttribute("user");
         boolean likeResult = likeService.select(dto, user);
@@ -44,7 +44,7 @@ public class LikeController {
     }
 
     // 유저 찜 리스트 가져오기
-    @PostMapping("/getLikeAll")
+    @PostMapping("/getAll")
     public List<favResDto> getLikeAll(HttpSession session) {
         System.out.println("get LikeAll Post In...");
         var user = (String) session.getAttribute("user");

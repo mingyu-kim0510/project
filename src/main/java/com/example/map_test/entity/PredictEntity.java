@@ -1,6 +1,6 @@
 package com.example.map_test.entity;
 
-import com.example.map_test.dto.DistrictColorResDto;
+import com.example.map_test.dto.DistrictResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,4 +31,12 @@ public class PredictEntity {
     @ManyToOne
     @JoinColumn(name = "dist_idx")
     private DistrictEntity districtEntity;
+
+    public DistrictResDto todistrictResDto (String predictName, int storeCount) {
+        return DistrictResDto.builder()
+                .districtName(predictName)
+                .predictCongestion(predictCongestion)
+                .storeCount(storeCount)
+                .build();
+    }
 }

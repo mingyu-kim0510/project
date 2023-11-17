@@ -1,6 +1,7 @@
 package com.example.map_test.controller;
 
 import com.example.map_test.dto.UserDto;
+import com.example.map_test.service.PeopleService;
 import com.example.map_test.service.StoreService;
 import com.example.map_test.service.StoreServiceImpl;
 import com.example.map_test.service.UserService;
@@ -22,8 +23,6 @@ import java.io.IOException;
 @RequestMapping("")
 @RequiredArgsConstructor
 public class HomeController {
-
-    private final StoreService storeService;
 
     @GetMapping("/map")
     public void mapMain() {

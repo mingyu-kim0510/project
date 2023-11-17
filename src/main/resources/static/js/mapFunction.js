@@ -177,7 +177,7 @@ async function mapRender(result, mapOption, positions) {
             });
             if(tempTel == null) tempTel = ''
             // 음식점 정보 + 찜 여부 확인하기
-            let result2 = await postFetcher('/getLike', {
+            let result2 = await postFetcher('/like/getOne', {
                     storeIdx: marker.Gb,
                     storeNewAddr: tempAddr,
                 })
@@ -306,7 +306,8 @@ function floatInfo (storeName, addr, star, url, tel) {
                     ${star}</a>
                 </div>
                 <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
-                    <a onclick="if(${!!url}) {document.getElementById('framesrc').src='${url}'; document.querySelector('#myModal').style.display = 'block'}">
+                    <a onclick="if(${!!url}) {document.getElementById('framesrc').src='${url}';
+                        $('#myModal').modal('show');}">
                         <img class="align-top text-end" src="/img/box-arrow-up-right.svg" style="width: 1.2rem; " alt="outerLink">
                     </a>
                 </div>

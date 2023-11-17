@@ -2,7 +2,7 @@ const cardInnerHTML = document.getElementById('cardInnerHTML');
 const flexCheckDefault = document.getElementById('flexCheckDefault');
 console.log(flexCheckDefault.checked)
 flexCheckDefault.addEventListener('click', async () => {
-    const resp = await fetch('/getLikeAll', { method: 'post' });
+    const resp = await fetch('/like/getAll', { method: 'post' });
     const result = await resp.json();
     console.log(result);
     tempData = result;
@@ -16,7 +16,7 @@ flexCheckDefault.addEventListener('click', async () => {
 var tempData = [];
 sendData();
 async function sendData() {
-    const result = await postFetcher('/getLikeAll', { method: 'post' });
+    const result = await postFetcher('/like/getAll', { method: 'post' });
     tempData = result;
     render(result);
 }

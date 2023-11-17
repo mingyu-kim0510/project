@@ -2,14 +2,17 @@ package com.example.map_test.service;
 
 import com.example.map_test.apis.PeopleApi;
 import com.example.map_test.dto.DistrictColorResDto;
+import com.example.map_test.dto.DistrictResDto;
 import com.example.map_test.entity.DistrictEntity;
 import com.example.map_test.entity.PredictEntity;
 import com.example.map_test.repository.PeopleRepository;
 import com.example.map_test.repository.PredictRepository;
+import com.example.map_test.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class PeopleServiceImpl implements PeopleService{
 
     private final PeopleApi peopleApi;
     private final PeopleRepository peopleRepository;
+    private final StoreRepository storeRepository;
     private final PredictRepository predictRepository;
 
     // 10분마다 함수 실행해서 업데이트
@@ -75,5 +79,27 @@ public class PeopleServiceImpl implements PeopleService{
             colorList.add(item.toColorDto());
         });
         return colorList;
+    }
+
+    @Override
+    public List<DistrictResDto> getDistrictData() {
+        //peopleRepository.findBy
+        return null;
+    }
+
+    @Transactional
+    @Override
+    public List<DistrictResDto> findStorePredictByDistrict () {
+        var temp = predictRepository.findAll();
+
+        List<DistrictResDto> districtResDtos = new ArrayList<>();
+        temp.forEach(i -> {
+            System.out.println(i.getDistrictEntity().getDistName());
+            System.out.println(i.getPredictCongestion());
+            districtResDtos.add(i.todistrictResDto(i.getDistrictEntity().getDistName(), i.getDistrictEntity().getStoreEntityList().size()));
+        });
+
+
+        return districtResDtos;
     }
 }

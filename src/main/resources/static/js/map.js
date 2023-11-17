@@ -98,7 +98,6 @@ searchVal.addEventListener('keypress', async function search(e) {
 reRenderBtn.addEventListener('click', async () => {
     // 검색기능 수행 전 스피너 띄우기
     spinner();
-
     const intervals = distCalc(map.getLevel()) * 0.00001126887;
 
     // category1 값 가져오기
@@ -129,6 +128,7 @@ reRenderBtn2.addEventListener('click', async () => {
     category1List.forEach(item => {
         if (item.checked) category1 = item.dataset.name;
     });
+
     // request
     let result = await postFetcher('/api/store/list',{
         searchVal: searchVal.value,
@@ -152,7 +152,7 @@ timeBtn.addEventListener('click', async ()=>{
 
 // 찜 목록만 검색
 likeBtn.addEventListener('click', async ()=>{
-    var data = await postFetcher('/getLikeAll')
+    var data = await postFetcher('/like/getAll')
     console.log(apiToggle.checked)
     if (apiToggle.checked) {
         const result = data.filter(item => item.storeCongestion != null)

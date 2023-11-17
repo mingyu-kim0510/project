@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface PredictRepository extends JpaRepository<PredictEntity, Long> {
     Optional<PredictEntity> findByDistrictEntity (DistrictEntity entity);
+
 }

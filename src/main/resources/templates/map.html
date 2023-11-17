@@ -89,7 +89,7 @@
 </head>
 <body>
 <!-- Modal -->
-<div class="modal" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="height:calc(100% + 3.5rem)">
             <div class="modal-body" style="margin:0; padding:0">
@@ -99,7 +99,7 @@
                 ></iframe>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-close" onclick="document.getElementById('myModal').style.display ='none'; document.getElementById('framesrc').src = ''"></button>
+                <button type="button" class="btn-close" onclick="$('#myModal').modal('hide'); document.getElementById('framesrc').src = ''"></button>
             </div>
         </div>
     </div>
