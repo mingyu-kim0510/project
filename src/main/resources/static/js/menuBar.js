@@ -19,7 +19,7 @@ async function menubar() {
         <div class="nav-item" style="width:5rem; padding-top:.375rem">
             <a class='text-decoration-none text-reset' href="/main">
                 <img style="height: 1.5rem" src="/img/house.svg" alt="집"/>
-                <div style="font-size: 0.7rem; transform: rotate(0.04deg)">메인화면</div> 
+                <div style="font-size: 0.7rem; transform: rotate(0.04deg)">메인</div> 
             </a>
         </div>
         <div class="nav-item" style="width:5rem; padding-top:.375rem">
@@ -43,7 +43,7 @@ async function menubar() {
         <div class="nav-item" style="width:5rem; padding-top:.375rem">
             <a class='text-decoration-none text-reset' href="/main">
                 <img style="height: 1.5rem" src="/img/house.svg" alt="집"/>
-                <div style="font-size: 0.7rem; transform: rotate(0.04deg)">메인화면</div>
+                <div style="font-size: 0.7rem; transform: rotate(0.04deg)">메인</div>
             </a>
         </div>
         <div class="nav-item" style="width:5rem; padding-top:.375rem">
