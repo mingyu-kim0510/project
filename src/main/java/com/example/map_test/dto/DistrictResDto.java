@@ -13,4 +13,5 @@ public class DistrictResDto {
     private String districtName;
     private String predictCongestion;
     private int storeCount;
+    private String predictTime;
 }

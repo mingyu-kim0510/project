@@ -36,6 +36,7 @@ public class PredictEntity {
         return DistrictResDto.builder()
                 .districtName(predictName)
                 .predictCongestion(predictCongestion)
+                .predictTime(predictTime)
                 .storeCount(storeCount)
                 .build();
     }

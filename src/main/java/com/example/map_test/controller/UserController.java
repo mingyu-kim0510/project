@@ -44,10 +44,11 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/signup")
-    public void register(UserDto dto, HttpServletResponse response) throws IOException {
+    public String register(@RequestBody UserDto dto) {
         System.out.println(dto);
-        userService.register(dto);
-        response.sendRedirect("/login");
+        var temp = userService.register(dto);
+        System.out.println(temp);
+        return temp;
     }
 
     @PostMapping("/modify")
