@@ -3,12 +3,9 @@ package com.example.map_test.service;
 import com.example.map_test.dto.UserDto;
 import com.example.map_test.entity.UserEntity;
 import com.example.map_test.repository.UserRepository;
-import com.example.map_test.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -50,4 +47,13 @@ public class UserServiceImpl implements UserService {
             userRepository.save(originalAccount.get());
         }
     }
+
+    @Override
+    public boolean idcheck(UserDto dto) {
+       if (userRepository.findByUserId(dto.getUserId()).isPresent()) {
+           return false;
+       }
+       return true;
+    }
+
 }

@@ -52,10 +52,10 @@ public class UserController {
 
     @PostMapping("/modify")
     public void modify(@RequestBody UserDto dto, HttpSession session, Model model) {
-            String originalName = (String) session.getAttribute("user");
-            userService.modify(originalName,dto);
-            session.setAttribute("user", dto.getUserId());
-            model.addAttribute("test", session.getAttribute("user"));
+        String originalName = (String) session.getAttribute("user");
+        userService.modify(originalName, dto);
+        session.setAttribute("user", dto.getUserId());
+        model.addAttribute("test", session.getAttribute("user"));
     }
 
     // 검색 후 리스트 출력
@@ -63,6 +63,13 @@ public class UserController {
     public void logout(HttpServletResponse response, HttpSession session) throws IOException {
         session.invalidate();
         response.sendRedirect("/mypage");
+    }
+
+    @PostMapping("/id-check")
+    public boolean idcheck(@RequestBody UserDto dto) {
+        System.out.println("userId =" + dto.getUserId());
+        boolean checkResult = userService.idcheck(dto);
+        return checkResult;
     }
 
 

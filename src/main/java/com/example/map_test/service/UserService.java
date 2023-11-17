@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,5 +27,8 @@ public interface UserService {
                 .build();
     }
 
+    boolean idcheck(UserDto dto);
+
 
 }
+
