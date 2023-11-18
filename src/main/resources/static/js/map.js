@@ -28,37 +28,6 @@ var map = new kakao.maps.Map(mapContainer, {
  * 상수, 변수 끝
  * */
 
-window.onload = async () => {
-    // 로그인 여부 확인 후 like 버튼 보이기
-    const UserSession = await fetch('/mypage', {method:'post'})
-    const UserResult = await UserSession.text();
-
-    if (UserResult != '') {
-        document.getElementById('likeLabel').style.display = 'inline-block';
-        document.getElementById('likeBtn').style.display = 'inline-block';
-    }
-    const sessionresult = await getFetcher('/api/map')
-
-    if (sessionresult != "") {
-        category1 = sessionresult;
-        // 검색기능 수행 전 스피너
-        spinner();
-
-        // 오프캔버스 창 열기
-        $('#offcanvasExample').offcanvas('show');
-        // 콜랩스 창 닫기
-        $('.collapse').collapse('hide');
-
-        // request
-        const result = await postFetcher('/api/store/list',
-            { searchVal: "", category1: category1, category2: "", category3: "", isPeopleApi: 1 });
-        await getFetcher('/api/map/init');
-
-
-        // 검색 결과로 맵핀 계산
-        await mapCalc(result,null,null);
-    }
-}
 // 검색바에서 검색 시
 searchVal.addEventListener('keypress', async function search(e) {
     if (e.key === 'Enter') {

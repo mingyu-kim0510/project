@@ -16,6 +16,7 @@ flexCheckDefault.addEventListener('click', async () => {
 var tempData = [];
 sendData();
 async function sendData() {
+    cardInnerHTML.style.display = 'none';
     const result = await postFetcher('/like/getAll', { method: 'post' });
     tempData = result;
     render(result);
@@ -54,6 +55,7 @@ function render(result, isChecked) {
                     </div>
                 </div>
                 `;
+            cardInnerHTML.style.display = 'block';
         }
     });
     cardInnerHTML.innerHTML += `<div style="height:3.5rem">&nbsp;</div>`
