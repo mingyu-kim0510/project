@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PeopleRepository extends JpaRepository<DistrictEntity, Long> {
-    Optional<DistrictEntity> findByDistCode (String distName);
+    Optional<DistrictEntity> findByDistCode (String distCode);
+    Optional<DistrictEntity> findByDistName (String distName);
     List<DistrictEntity> findAll();
     List<DistrictEntity> findByPredictEntityListNotNull ();
 }

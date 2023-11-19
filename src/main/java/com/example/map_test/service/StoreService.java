@@ -9,4 +9,5 @@ public interface StoreService {
     StoreResDto findOne(Long storeIdx);
 
     List<StoreResDto> findStorePredict (StoreReqDto dto, int predictTime);
+    List<StoreResDto> findStoresByDistrict(StoreReqDto dto);
 }

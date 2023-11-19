@@ -12,4 +12,5 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     Optional<StoreEntity> findByStoreIdx(Long idx);
     List<StoreEntity> findByStoreLatBetweenAndStoreLonBetween (Double latMin, Double latMax, Double lonMin, Double lonMax);
     List<StoreEntity> findByDistrictEntityNotNull();
+    List<StoreEntity> findByDistrictEntity(DistrictEntity entity);
 }

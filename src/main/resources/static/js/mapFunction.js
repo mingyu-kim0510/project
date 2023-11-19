@@ -1,5 +1,5 @@
 // 지도 관련 계산
-async function mapCalc(result, mapPosition, isPosition) {
+async function mapCalc(result, mapPosition, positioner, predictor) {
     // 결과 값 공백 확인하기
     // 결과 있음
     if (result.length !== 0) {
@@ -15,10 +15,11 @@ async function mapCalc(result, mapPosition, isPosition) {
             distLevel = 0;
 
         result.forEach((item) => {
-            if (isPosition !== 1) congestion = item.storeCongestion;
+            // isPosition 1: 일반지표, 2: 예측지표, null: 지역검색
+            if (predictor !== 1) congestion = item.storeCongestion;
             else congestion = item.predictCongestion;
             // mapSearch
-            if(isPosition != null) {
+            if(positioner != null) {
                 positions.push({
                     title: item.storeName,
                     storeIdx: item.storeIdx,
@@ -34,7 +35,7 @@ async function mapCalc(result, mapPosition, isPosition) {
                     title: item.storeName,
                     storeIdx: item.storeIdx,
                     latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
-                    congestion: item.storeCongestion
+                    congestion: congestion
                 });
                 latList.push(parseFloat(item.storeLat));
                 lngList.push(parseFloat(item.storeLon));
@@ -59,39 +60,6 @@ async function mapCalc(result, mapPosition, isPosition) {
         // 현위치에서 지도 초기화
         mapInit(mapPosition);
         storeList.innerHTML = `<div>검색결과가 없습니다.</div>`;
-    }
-}
-
-// 지도 관련 계산 (좌표계산 제외)
-async function mapCalcRevised(result, isPredict) {
-
-    if (result.length !== 0) {
-        // 지도 내용 초기화
-        mapContainer.innerHTML = '';
-
-        // 핀 위치, 중심좌표 지정
-        let positions = [];
-        if (isPredict) {
-            result.forEach(item => {
-                positions.push({
-                    title: item.storeName,
-                    storeIdx: item.storeIdx,
-                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
-                    congestion: item.predictCongestion
-                });
-            });
-        } else {
-            result.forEach(item => {
-                positions.push({
-                    title: item.storeName,
-                    storeIdx: item.storeIdx,
-                    latlng: new kakao.maps.LatLng(parseFloat(item.storeLat), parseFloat(item.storeLon)),
-                    congestion: item.storeCongestion
-                });
-            });
-        }
-        var mapOption = newMapOption(map.getCenter().Ma, map.getCenter().La, map.getLevel());
-        await mapRender(result, mapOption, positions);
     }
 }
 

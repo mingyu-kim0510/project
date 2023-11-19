@@ -6,8 +6,6 @@ const mapContainer = document.getElementById('map'); // 지도를 표시할 div
 const searchVal = document.getElementById('searchVal'); // 검색값
 const storeList = document.getElementById('innerList'); // 검색결과 내용 리스트
 const floatingInfo = document.getElementById('floatingInfo'); // 음식점 정보 플로팅
-const offcanvas = document.getElementById('offcanvasExample'); // 오프캔버스 id
-const collapse = document.querySelector('.collapse'); // 콜래스 클래스
 const reRenderBtn = document.getElementById('reRenderBtn'); // 지역 내 재검색 버튼
 const reRenderBtn2 = document.getElementById('reRenderBtn2'); // 지역 내 재검색 버튼
 const getHere = document.getElementById('getHere'); // 현위치 버튼
@@ -61,7 +59,7 @@ searchVal.addEventListener('keypress', async function search(e) {
         });
 
         // 검색 결과로 맵핀 계산
-        await mapCalc(result,null,null);
+        await mapCalc(result,null,null, null);
     }
 });
 // 지역내 재검색
@@ -85,9 +83,10 @@ reRenderBtn.addEventListener('click', async () => {
         intervals: intervals,
         isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
     });
-    await mapCalc(result, false, 0);
+    await mapCalc(result, false, 0, null);
 });
 
+// 지역내 재검색 (콜랩스 내 버튼)
 reRenderBtn2.addEventListener('click', async () => {
     // 검색기능 수행 전 스피너 띄우기
     spinner();
@@ -110,14 +109,14 @@ reRenderBtn2.addEventListener('click', async () => {
         intervals: intervals,
         isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
     });
-    await mapCalc(result, false, 0);
+    await mapCalc(result, false, 0, null);
     $('#collapseExample').collapse('hide');
 });
 
-// 타임 버튼
+// 예측지표 버튼
 timeBtn.addEventListener('click', async ()=>{
     const result = await postFetcher('/api/getPredict')
-    await mapCalc(result, null, 1);
+    await mapCalc(result, null, null,1);
 })
 
 // 찜 목록만 검색
@@ -126,12 +125,12 @@ likeBtn.addEventListener('click', async ()=>{
     console.log(apiToggle.checked)
     if (apiToggle.checked) {
         const result = data.filter(item => item.storeCongestion != null)
-        await mapCalc(result, null, null);
+        await mapCalc(result, null, null, null);
     } else if (safeToggle.checked) {
         const result = data.filter(item => item.storeCongestion === "여유")
-        await mapCalc(result, null, null);
+        await mapCalc(result, null, null, null);
     } else {
-        await mapCalc(data, null, null);
+        await mapCalc(data, null, null, null);
     }
 })
 

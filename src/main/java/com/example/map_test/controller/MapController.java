@@ -26,16 +26,28 @@ public class MapController {
     public List<StoreResDto> getStoreList(@RequestBody StoreReqDto dto) {
         return storeService.findStore(dto);
     }
+    @PostMapping("/store/district")
+    public List<StoreResDto> getStoresByDistrict (@RequestBody StoreReqDto dto) {
+        return storeService.findStoresByDistrict(dto);
+    }
 
     @GetMapping("/map/{option}")
     public void mapMain(@PathVariable String option, HttpSession session, HttpServletResponse response) throws IOException {
         response.sendRedirect("/map");
         session.setAttribute("option", option);
     }
-
-    @GetMapping("/map")
+    @GetMapping("/district/{target}")
+    public void getStoresByDistrict(@PathVariable String target, HttpSession session, HttpServletResponse response) throws IOException {
+        response.sendRedirect("/map");
+        session.setAttribute("district", target);
+    }
+    @GetMapping("/map/category")
     public String getSession (HttpSession session) {
         return (String) session.getAttribute("option");
+    }
+    @GetMapping("/map/district")
+    public String getDistrictSession(HttpSession session) {
+        return (String) session.getAttribute("district");
     }
 
     @PostMapping("/color")
@@ -56,10 +68,13 @@ public class MapController {
     @GetMapping("/map/init")
     public void initSession (HttpSession session) {
         session.setAttribute("option", "");
+        session.setAttribute("district", "");
     }
 
     @PostMapping("/getPredictAll")
     public List<DistrictResDto> getPredictAll() {
         return peopleService.findStorePredictByDistrict();
     }
+
+
 }

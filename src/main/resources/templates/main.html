@@ -108,22 +108,25 @@
         </div>
     </div>
 </div>
-
-<div class="mt-4">
-    <h5 style="margin-left: 40px;">여유 지역</h5>
-</div>
-<div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem" id="safeList">
-    <div class="spinner-border text-secondary" style="margin-left:1.5rem; margin-top:2.5rem; margin-bottom:2rem" role="status">
-        <span class="visually-hidden">Loading...</span>
+<div class="container">
+    <div class="mt-4">
+        <h5 style="margin-left:1.875rem">여유 지역</h5>
     </div>
-</div>
+    <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem" id="safeList">
+        <div style="margin-left:1.5rem; height: 6.7rem">
+            <div class="spinner-border text-secondary" style="" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
 
-<div class="mt-4">
-    <h5 style="margin-left: 40px;">혼잡 지역</h5>
-</div>
-<div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem; margin-bottom: 3.7rem" id="warnList">
-    <div class="spinner-border text-secondary" style="margin-left:1.5rem; margin-top:2.5rem; margin-bottom:2rem" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <div class="mt-4">
+        <h5 style="margin-left:1.875rem">혼잡 지역</h5>
+    </div>
+    <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem; margin-bottom: 3.7rem" id="warnList">
+        <div class="spinner-border text-secondary" style="margin-left:1.5rem; margin-top:2.5rem; margin-bottom:2rem" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
 </div>
 <div class="mt-4">
@@ -200,21 +203,32 @@
                     else color = '#fc5230'
                     warnList.innerHTML += addList(color, item.districtName, item.storeCount, i+1);
                 });
+                if(safeAndNormal.length === 0) {
+                    safeList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 여유 지역이 없어요!</div></div>`
+                }
+                if(warnAndDanger.length === 0) {
+                    warnList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 혼잡 지역이 없어요!</div></div>`
+                }
                 console.log(safeAndNormal);
                 console.log(warnAndDanger);
 
-                timeInput.innerHTML = newArr[0].predictTime.substring(11,17);;
+                timeInput.innerHTML = newArr[0].predictTime.substring(11,17);
             });
     }
     function addList(color, district, storeCount) {
         return `
-    <div class="card rounded button2 shadow-sm">
+    <div class="card rounded button2 shadow-sm" onclick="clickList(this)" data-name="${district}">
       <div class="card-body" style="text-overflow: ellipsis">
         <div class="card-title" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap">${district}</div>
         <button class="btn" style="margin-left:auto; background-color:${color}; color: white">${storeCount}곳</button>
       </div>
     </div>
         `;
+    }
+
+    function clickList(element) {
+        console.log(element.dataset.name);
+        location.href = "api/district/" + element.dataset.name;
     }
 </script>
 </html>
