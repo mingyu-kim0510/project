@@ -30,7 +30,7 @@
         }
         #header {
             background-color: #FFB7B1 !important;
-            height: 4.7rem;
+            height: 4rem;
         }
         #header h1 {
             font-family: 'YClover-Bold', sans-serif; /* Apply the custom font to the h2 element */
@@ -89,38 +89,33 @@
         .button-container2::-webkit-scrollbar {
             display: none;
         }
-        .button-container h1 {
-            font-family: 'NanumSquareBold';
-        }
-        .mt-2 h5 {
-            font-family: 'Nanum SquareBold';
-        }
+
     </style>
 </head>
 <body>
 <nav id="header" class="navbar bg-body-tertiary">
-    <div style="display: flex; align-items: center; margin-left:auto; margin-right:auto">
-        <img style="width: 2.5rem; display: block;" src="/img/apple-touch-icon.png" class="d=block" alt="">
-        <h1 style="color: #3b3b3b; line-height: 2rem; margin: 0 0 0 0.5rem;"> 추천해조</h1>
+    <div class="align-items: center" style="display: flex; align-items: center; margin-left:auto; margin-right:auto">
+        <img style="width: 2.2rem; display: block;" src="/img/apple-touch-icon.png" class="d=block" alt="">
+        <h1 style="font-size: 1.7rem; color: #3b3b3b; line-height: 2rem; margin: 0 0 0 0.5rem;"> &nbsp추천해조</h1>
     </div>
 </nav>
-<div style="margin-left:1.125rem; margin-right:1rem; padding-top: 1.5rem; padding-bottom: 1.5rem; background-color: white; border-radius: .375rem;">
+<div style="margin-left:1.125rem; margin-right:1rem; padding-top: 1rem; padding-bottom: 1rem; background-color: white; border-radius: .375rem;">
     <div class="row justify-content-between" style="align-items: center;">
         <div class="col-12" style="padding-left:1.1rem">
-            <h1 style="font-size: calc(100vh / 25)">실시간 예상 혼잡도</h1>
+            <h1 style="font-size: calc(50vh / 20)">실시간 예상 혼잡도</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-auto" style="margin:0; margin-left:1.125rem; padding:0">
-                <button type="button" class="btn btn-outline-primary" id="timeBtn" style="display: flex; transform: rotate(0.04deg)" data-no=0>
-                    <div style="font-size: calc(100vw / 25); margin:0">기준 시간 : </div>
-                    <div style="margin:0; font-size: calc(100vw / 25); transform: rotate(0.04deg)" id="timeInput"> -</div>
-                </button>
+            <button type="button" class="btn btn-outline-primary" id="timeBtn" style="display: flex; transform: rotate(0.04deg)" data-no=0>
+                <div style="font-size: calc(100vw / 25); margin:0">기준 시간 : </div>
+                <div style="margin:0; font-size: calc(100vw / 25); transform: rotate(0.04deg)" id="timeInput"> -</div>
+            </button>
         </div>
     </div>
 </div>
 
-<div style="background-color: #f2f2f2; padding-top: 1.5rem;">
+<div style="background-color: #f2f2f2; padding-top: 1rem; padding-bottom: 1rem">
     <div class="container">
         <div>
             <h5 style="margin-left:.75rem;">여유 지역</h5>
@@ -133,45 +128,44 @@
             </div>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-3">
             <h5 style="margin-left:.75rem;">혼잡 지역</h5>
         </div>
         <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem; margin-top: auto; margin-bottom: auto" id="warnList">
-            <div class="spinner-border text-secondary" style="margin-left:1.2rem; margin-top:2.5rem; margin-bottom:1.7rem" role="status">
+            <div class="spinner-border text-secondary" style="margin-left:1.2rem; margin-top:2.5rem; margin-bottom:1rem" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-        <div style="margin-bottom:2.6rem">&nbsp;</div>
     </div>
 </div>
-<div class="mt-2">
+<div class="mt-3">
     <h3 style="margin-left: 30px">카테고리</h3>
 </div>
-<div class="container-fluid" style="margin-bottom: 4.5rem">
-    <div class="button-container mt-4">
+<div class="container-fluid">
+    <div class="button-container mt-2">
         <a class='button' href="api/map/한식">
-            <img style="height: 3rem" src="/img/porridge.png" alt="한식"/>
-            <h1 style= "font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: black;">한식</h1>
+            <img style="height: 2.5rem" src="/img/porridge.png" alt="한식"/>
+            <h1 style= "font-weight: bold; font-size: 1rem; margin-top: 1rem; color: black;">한식</h1>
         </a>
         <a class='button' href="api/map/중식">
-            <img style="height: 3rem" src="/img/dimsum.png" alt="중식"/>
-            <h1 style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: black;">중식</h1>
+            <img style="height: 2.5rem" src="/img/dimsum.png" alt="중식"/>
+            <h1 style="font-weight: bold; font-size: 1rem; margin-top: 1rem; color: black;">중식</h1>
         </a>
         <a class='button' href="api/map/일식">
-            <img style="height: 3rem" src="/img/sushi.png" alt="일식"/>
-            <h1 style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: black;">일식</h1>
+            <img style="height: 2.5rem" src="/img/sushi.png" alt="일식"/>
+            <h1 style="font-weight: bold; font-size: 1rem; margin-top: 1rem; color: black;">일식</h1>
         </a>
-        <a class='button' href="api/map/서양식">
-            <img style="height: 3rem" src="/img/pizza.png" alt="양식"/>
-            <h1 style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: black;">양식</h1>
+        <a class='button mt-1' href="api/map/서양식">
+            <img style="height: 2.5rem" src="/img/pizza.png" alt="양식"/>
+            <h1 style="font-weight: bold; font-size: 1rem; margin-top: 1rem; color: black;">양식</h1>
         </a>
-        <a class='button' href="api/map/아시아">
-            <img style="height: 3rem" src="/img/sauce.png" alt="아시안"/>
-            <h1 style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: black;">아시안</h1>
+        <a class='button mt-1' href="api/map/아시아">
+            <img style="height: 2.5rem" src="/img/sauce.png" alt="아시안"/>
+            <h1 style="font-weight: bold; font-size: 1rem; margin-top: 1rem; color: black;">아시안</h1>
         </a>
-        <a class='button' href="api/map/디저트">
-            <img style="height: 3rem" src="/img/dessert.png" alt="디저트"/>
-            <h1 style="font-weight: bold; font-size: 1.1rem; margin-top: 1rem; color: black;">디저트</h1>
+        <a class='button mt-1' href="api/map/디저트">
+            <img style="height: 2.5rem" src="/img/dessert.png" alt="디저트"/>
+            <h1 style="font-weight: bold; font-size: 1rem; margin-top: 1rem; color: black;">디저트</h1>
         </a>
     </div>
 </div>
@@ -180,12 +174,12 @@
     <div class="modal-dialog modal-dialog-centered" style="margin-left:auto; margin-right:auto; max-width:20rem">
         <div class="modal-content">
             <div class="modal-body"  style="margin-left:auto; margin-right:auto; max-width:18rem" >
-            <div id="modalBody">
+                <div id="modalBody">
 
-            </div>
-            <div style="margin-left:15%; margin-right:15%; transform: rotate(.04deg)">
-                <button type="button" class="btn btn-warning w-100 mb-3" onclick="location.href = '/api/district/'+ modalBody.children[0].innerText">지도로 보기</button>
-            </div>
+                </div>
+                <div style="margin-left:15%; margin-right:15%; transform: rotate(.04deg)">
+                    <button type="button" class="btn btn-warning w-100 mb-3" onclick="location.href = '/api/district/'+ modalBody.children[0].innerText">지도로 보기</button>
+                </div>
             </div>
         </div>
     </div>
@@ -201,7 +195,7 @@
     const timeInput = document.getElementById('timeInput');
     const modalBody = document.getElementById('modalBody');
     function loader() {
-    return `
+        return `
                 <div style="margin-left:1.2rem; height: ${document.querySelector('.predictLists').clientHeight}px; margin-top: auto; margin-bottom: auto">
                     <div class="spinner-border text-secondary" style="" role="status">
                         <span class="visually-hidden">Loading...</span>
