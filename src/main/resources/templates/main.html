@@ -50,7 +50,7 @@
             scroll-snap-type: x mandatory; /* 스크롤 스냅 설정 */
         }
         .button2 {
-            flex: 0 0 calc(50% - .375rem); /* 3개씩 보이도록 너비 조정 */
+            flex: 0 0 calc(40% - .375rem); /* 3개씩 보이도록 너비 조정 */
             text-align: left;
             padding:  .1875rem;
             margin-left: .1875rem;
@@ -162,58 +162,56 @@
 </div>
 <div id="menuBar"></div>
 <script src="/js/menuBar.js"></script>
+<script src="/js/fetcher.js"></script>
 </body>
 <script>
     const safeList = document.getElementById('safeList');
     const warnList = document.getElementById('warnList');
     const timeInput = document.getElementById('timeInput');
-    window.onload = firstLoad;
-    function firstLoad() {
-        fetch('/api/getPredictAll', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-        })
-            .then((res) => res.json())
-            .then((result) => {
-                let arr = [];
-                arr = result
-                    .filter((item) => item.storeCount > 0)
-                    .sort((a, b) => a.predictTime.localeCompare(b.predictTime));
-                safeList.innerHTML = '';
-                warnList.innerHTML = '';
-                let newArr = [], safeAndNormal = [], warnAndDanger = [];
-                newArr = arr.slice(0, 28);
+    var fetchResult = '';
+    window.onload = async () => {
+        fetchResult = await postFetcher('/api/getPredictAll', {});
+        predictRender();
+    }
 
-                safeAndNormal = newArr
-                    .filter((item) => item.predictCongestion === '여유' || item.predictCongestion === '보통')
-                    .sort((a, b) => b.storeCount - a.storeCount);
-                safeAndNormal.forEach((item,i) => {
-                    let color = '';
-                    if(item.predictCongestion === '여유') color = '#1960ef'
-                    else color = '#7db249'
-                    safeList.innerHTML += addList(color, item.districtName, item.storeCount, i+1);
-                });
+    function predictRender() {
+        let arr = [], newArr = [], safeAndNormal = [], warnAndDanger = [];
+        arr = fetchResult
+            .filter((item) => item.storeCount > 0)
+            .sort((a, b) => a.predictTime.localeCompare(b.predictTime));
+        safeList.innerHTML = '';
+        warnList.innerHTML = '';
+        newArr = arr.slice(0, 28);
 
-                warnAndDanger = newArr
-                    .filter((item) => item.predictCongestion === '약간 붐빔' || item.predictCongestion === '붐빔')
-                    .sort((a, b) => b.storeCount - a.storeCount);
-                warnAndDanger.forEach((item,i) => {
-                    let color = '';
-                    if(item.predictCongestion === '약간 붐빔') color = '#fd9f28'
-                    else color = '#fc5230'
-                    warnList.innerHTML += addList(color, item.districtName, item.storeCount, i+1);
-                });
-                if(safeAndNormal.length === 0) {
-                    safeList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 여유 지역이 없어요!</div></div>`
-                }
-                if(warnAndDanger.length === 0) {
-                    warnList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 혼잡 지역이 없어요!</div></div>`
-                }
-                console.log(safeAndNormal);
-                console.log(warnAndDanger);
+        safeAndNormal = newArr
+            .filter((item) => item.predictCongestion === '여유' || item.predictCongestion === '보통')
+            .sort((a, b) => b.storeCount - a.storeCount);
+        safeAndNormal.forEach((item,i) => {
+            let color = '';
+            if(item.predictCongestion === '여유') color = '#1960ef'
+            else color = '#7db249'
+            safeList.innerHTML += addList(color, item.districtName, item.storeCount, i+1);
+        });
 
-                timeInput.innerHTML = newArr[0].predictTime.substring(11,17);
-            });
+        warnAndDanger = newArr
+            .filter((item) => item.predictCongestion === '약간 붐빔' || item.predictCongestion === '붐빔')
+            .sort((a, b) => b.storeCount - a.storeCount);
+        warnAndDanger.forEach((item,i) => {
+            let color = '';
+            if(item.predictCongestion === '약간 붐빔') color = '#fd9f28'
+            else color = '#fc5230'
+            warnList.innerHTML += addList(color, item.districtName, item.storeCount, i+1);
+        });
+        if(safeAndNormal.length === 0) {
+            safeList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 여유 지역이 없어요!</div></div>`
+        }
+        if(warnAndDanger.length === 0) {
+            warnList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 혼잡 지역이 없어요!</div></div>`
+        }
+        console.log(safeAndNormal);
+        console.log(warnAndDanger);
+
+        timeInput.innerHTML = newArr[0].predictTime.substring(11,17);
     }
     function addList(color, district, storeCount) {
         return `
