@@ -1,5 +1,6 @@
 const cardInnerHTML = document.getElementById('cardInnerHTML');
 const flexCheckDefault = document.getElementById('flexCheckDefault');
+
 flexCheckDefault.addEventListener('click', async () => {
     const resp = await fetch('/like/getAll', { method: 'post' });
     const result = await resp.json();
