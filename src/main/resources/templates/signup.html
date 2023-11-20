@@ -100,16 +100,16 @@ const submitBtn = document.getElementById('submitBtn');
 
 
 function pwChecker() {
-    if (o.value != re.value) {
-        pw.innerHTML = '비밀번호가 일치하지 않습니다';
-    } else {
-        pw.innerHTML = '';
-    }
+    if (o.value !== re.value)  pw.innerHTML = '비밀번호가 일치하지 않습니다';
+    else pw.innerHTML = '';
 }
 
 submitBtn.addEventListener('click', () => {
     console.log('login button in...')
-    if (userIdCheck.innerHTML !== '사용 중인 아이디 입니다' && pw.innerHTML !== '비밀번호가 일치하지 않습니다' && o.value !== '' && re.value !== '') {
+    if (userIdCheck.style.color === 'blue'
+        && pw.style.color !== 'red'
+        && o.value !== ''
+        && re.value !== '') {
         fetch('/signup', {
             method: 'post',
             headers: {
@@ -122,6 +122,7 @@ submitBtn.addEventListener('click', () => {
         }).then(res => res.text()).then(data => {
             if (data != null) location.href = "/login"
         })
+
     } else {
         console.log('login failed in...')
         $('#alertModal').html(alertModal('아이디와 비밀번호를 다시 확인해주세요'));
@@ -132,7 +133,11 @@ submitBtn.addEventListener('click', () => {
 userId.addEventListener('blur', async () => {
     if(userId.value !== '') {
         const result = await postFetcher('/id-check', {userId: userId.value})
-        if (result) {
+        if (userId.value.length < 3) {
+            userIdCheck.innerHTML = '3글자 이상 입력해 주세요';
+            userIdCheck.style.color = 'red';
+        }
+        else if (result) {
             userIdCheck.innerHTML = '사용 가능한 아이디 입니다';
             userIdCheck.style.color = 'blue';
         } else {

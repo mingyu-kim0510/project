@@ -1,6 +1,5 @@
 const cardInnerHTML = document.getElementById('cardInnerHTML');
 const flexCheckDefault = document.getElementById('flexCheckDefault');
-console.log(flexCheckDefault.checked)
 flexCheckDefault.addEventListener('click', async () => {
     const resp = await fetch('/like/getAll', { method: 'post' });
     const result = await resp.json();
@@ -35,7 +34,7 @@ function render(result, isChecked) {
                         <span>
                             <div class="row fw-bold">
                                 <div class="col-5">
-                                    <a style="font-size: 0.9rem; margin-left: 0.4rem" onclick=" if(${isTempUrl}) {document.getElementById('framesrc').src='${item.storeUrl}'; document.querySelector('#myModal').style.display = 'block'}">${item.storeName}</a>
+                                    <a style="font-size: 0.9rem; margin-left: 0.4rem" onclick=" if(${isTempUrl}) {document.getElementById('framesrc').src='${item.storeUrl}'; $('#myModal').modal('show');}">${item.storeName}</a>
                                 </div>
                                 <div class="col-auto" style="margin-left:auto; margin-right:.375rem">
                                     <div class="row">
