@@ -1,7 +1,11 @@
+
+// 로그인 여부 확인 후 like 버튼 보이기
+var UserSession = ''
+var UserResult = ''
+
 window.onload = async () => {
-    // 로그인 여부 확인 후 like 버튼 보이기
-    const UserSession = await fetch('/mypage', {method:'post'})
-    const UserResult = await UserSession.text();
+    UserSession = await fetch('/mypage', {method:'post'})
+    UserResult = await UserSession.text();
 
     if (UserResult != '') {
         document.getElementById('likeLabel').style.display = 'inline-block';

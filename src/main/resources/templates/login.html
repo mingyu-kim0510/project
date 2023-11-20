@@ -64,31 +64,28 @@
 </body>
 
 <script>
-    let userId = document.getElementById('userId');
-    let userPw = document.getElementById('userPw');
+    const userId = document.getElementById('userId');
+    const userPw = document.getElementById('userPw');
     const Btn = document.getElementById('sendBtn');
 
-    Btn.addEventListener('click',
-        async () => {
-            const res = await fetch('/login', {
-                method: 'post',
-                headers: {
-                    'Content-Type' : 'application/json'
-                },
-                body : JSON.stringify({
-                    'userId': userId.value,
-                    'userPw': userPw.value
-                })
-            })
-            const result = await res.text();
-            console.log(result);
-            if (result != '') {
-                location.href = '/mypage';
-            } else {
+    Btn.addEventListener('click', (event) => login());
+    userId.addEventListener('keydown', (event) => { if(event.key === 'Enter') login() })
+    userPw.addEventListener('keydown', (event) => { if(event.key === 'Enter') login() })
+
+    function login() {
+        const body = JSON.stringify({ 'userId': userId.value, 'userPw': userPw.value })
+        fetch('/login', {
+            method: 'post',
+            headers: { 'Content-Type' : 'application/json' },
+            body: body
+        }).then(res => res.text()).then(data => {
+            if (data !== '') location.href = '/mypage';
+            else {
                 $('#alertModal').html(alertModal('아이디와 비밀번호를 다시 확인해주세요'));
                 $('#alertModal').modal('show');
             }
         })
+    }
 
 </script>
 </html>

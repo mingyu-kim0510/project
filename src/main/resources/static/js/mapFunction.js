@@ -150,7 +150,7 @@ async function mapRender(result, mapOption, positions) {
                     storeNewAddr: tempAddr,
                 })
             var star = '';
-            if (sessionResult === '') {
+            if (UserResult === '') {
                 star = ``;
             } else {
                 console.log(result2.likeResult)
@@ -171,7 +171,6 @@ async function mapRender(result, mapOption, positions) {
             // 지도 중심을 부드럽게 이동시킵니다
             // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
             map.panTo(moveLatLon);
-            navigator.clipboard.writeText(marker.Gb+', ');
         };
     }
 
@@ -185,7 +184,7 @@ async function mapRender(result, mapOption, positions) {
     // 오프캔버스에 검색결과 출력
     storeList.innerHTML = '';
     storeList.innerHTML = result.reduce((acc, item) => {
-        var congestion = null;
+        let congestion = null;
         if (item.predictCongestion != null) congestion = item.predictCongestion
         else if (item.storeCongestion != null) congestion = item.storeCongestion;
         else congestion = '미제공'
@@ -195,13 +194,13 @@ async function mapRender(result, mapOption, positions) {
                         <div class="row justify-content-between">
                             <div class="col-7">
                                 <a onclick="
-                                map.setCenter(new kakao.maps.LatLng(${item.storeLat}, ${item.storeLon}));
-                                map.setLevel(3);
-                                $('#offcanvasExample').offcanvas('hide');
-                                const star = getLike(${item.likeResult});
-                                // 음식점 정보 none -> block
-                                floatingInfo.style.display = 'block';
-                                floatingInfo.innerHTML = floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}');
+                                    map.setCenter(new kakao.maps.LatLng(${item.storeLat}, ${item.storeLon}));
+                                    map.setLevel(3);
+                                    $('#offcanvasExample').offcanvas('hide');
+                                    const star = getLike(${item.likeResult});
+                                    // 음식점 정보 none -> block
+                                    floatingInfo.style.display = 'block';
+                                    floatingInfo.innerHTML = floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}');
                                 ">
                                     ${item.storeName}
                                 </a>
@@ -261,23 +260,28 @@ function colorPicker(element, state) {
 
 // 플로팅 창 내용 넣기
 function floatInfo (storeName, addr, star, url, tel) {
+    let starLoad = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}" style="display:none">${star}</a>`
+    if(UserResult !== '') starLoad = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">${star}</a>`
     return `
     <div class='shadow-sm card custom_zoomcontrol'
         style="bottom: calc(3.5rem + 11%); width:95%">
         <div class="card-body w-100">
-            <div class="row">
-                <div class="col-9">
-                    <h6 class="card-title text-start fw-bold">${storeName}</h6>
+            <div class="row justify-content-between">
+                <div class="col-auto"  style="text-overflow: ellipsis; max-width:67%" >
+                    <div class="card-title text-start fw-bold" style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis">${storeName}</div>
                 </div>
                 <div class="col-auto" style="margin-left: auto; margin-right:0">
-                <a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">
-                    ${star}</a>
-                </div>
-                <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
-                    <a onclick="if(${!!url}) {document.getElementById('framesrc').src='${url}';
-                        $('#myModal').modal('show');}">
-                        <img class="align-top text-end" src="/img/box-arrow-up-right.svg" style="width: 1.2rem; " alt="outerLink">
-                    </a>
+                    <div class="row">
+                        <div class="col-auto">
+                            ${starLoad}
+                        </div>
+                        <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
+                            <a onclick="if(${!!url}) {document.getElementById('framesrc').src='${url}';
+                                $('#myModal').modal('show');}">
+                                <img class="align-top text-end" src="/img/box-arrow-up-right.svg" style="width: 1.2rem; " alt="outerLink">
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <p class="card-text text-start text-truncate" style="font-size:0.8rem; margin-bottom: 0.375rem">${addr.substring(5)}</p>
