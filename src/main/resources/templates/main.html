@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <title>Main</title>
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
@@ -58,13 +58,13 @@
         }
         .button-container2 {
             display: flex;
-            margin-left: 1.5rem;
-            margin-right: 1.5rem;
+            margin-left: .75rem;
+            margin-right: .75rem;
             overflow-x: auto; /* 수평 스크롤 유지 */
             scroll-snap-type: x mandatory; /* 스크롤 스냅 설정 */
         }
         .button2 {
-            flex: 0 0 calc(40% - .375rem); /* 3개씩 보이도록 너비 조정 */
+            flex: 0 0 calc(45% - .375rem); /* 3개씩 보이도록 너비 조정 */
             text-align: left;
             padding:  .1875rem;
             margin-left: .1875rem;
@@ -99,46 +99,49 @@
 </head>
 <body>
 <nav id="header" class="navbar bg-body-tertiary">
-    <div style="display: flex; align-items: center;">
-        <img style="height: 2.2rem; display: block; margin-left: 1rem;" src="/img/smile.svg"class="d=block" alt="">
+    <div style="display: flex; align-items: center; margin-left:auto; margin-right:auto">
+        <img style="width: 2.5rem; display: block;" src="/img/apple-touch-icon.png" class="d=block" alt="">
         <h1 style="color: #3b3b3b; line-height: 2rem; margin: 0 0 0 0.5rem;"> 추천해조</h1>
     </div>
 </nav>
-
-<div class="container" style="margin-top:2.5rem">
+<div style="margin-left:1.125rem; margin-right:1rem; padding-top: 1.5rem; padding-bottom: 1.5rem; background-color: white; border-radius: .375rem;">
     <div class="row justify-content-between" style="align-items: center;">
-        <div class="col-auto">
-            <h2 style="margin-left: 1rem">실시간 예상 혼잡도</h2>
+        <div class="col-12" style="padding-left:1.1rem">
+            <h1 style="font-size: calc(100vh / 25)">실시간 예상 혼잡도</h1>
         </div>
-        <div class="col-auto">
-            <span style="display: flex; align-items: center;">
-                <div style="display: flex; align-items: center;">
-                    <h6 style="font-size: 1.1rem;">기준 시간 : </h6>
-                    <h6 style="margin-right: 1rem; font-size: 1.2rem; transform: rotate(0.04deg)" id="timeInput"> -</h6>
-                </div>
-            </span>
+    </div>
+    <div class="row">
+        <div class="col-auto" style="margin:0; margin-left:1.125rem; padding:0">
+                <button type="button" class="btn btn-outline-primary" id="timeBtn" style="display: flex; transform: rotate(0.04deg)" data-no=0>
+                    <div style="font-size: calc(100vw / 25); margin:0">기준 시간 : </div>
+                    <div style="margin:0; font-size: calc(100vw / 25); transform: rotate(0.04deg)" id="timeInput"> -</div>
+                </button>
         </div>
     </div>
 </div>
-<div class="container">
-    <div style="margin-top:2.1rem">
-        <h5 style="margin-left:1.875rem">여유 지역</h5>
-    </div>
-    <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem" id="safeList">
-        <div style="margin-left:1.2rem; height: 6.7rem">
-            <div class="spinner-border text-secondary" style="" role="status">
+
+<div style="background-color: #f2f2f2; padding-top: 1.5rem;">
+    <div class="container">
+        <div>
+            <h5 style="margin-left:.75rem;">여유 지역</h5>
+        </div>
+        <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem;  margin-top: auto; margin-bottom: auto" id="safeList">
+            <div style="margin-left:1.2rem; height: 6.7rem">
+                <div class="spinner-border text-secondary" style="" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h5 style="margin-left:.75rem;">혼잡 지역</h5>
+        </div>
+        <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem; margin-top: auto; margin-bottom: auto" id="warnList">
+            <div class="spinner-border text-secondary" style="margin-left:1.2rem; margin-top:2.5rem; margin-bottom:1.7rem" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
-    </div>
-
-    <div class="mt-4">
-        <h5 style="margin-left:1.875rem">혼잡 지역</h5>
-    </div>
-    <div class="button-container2" style="padding-top: 0.5rem; padding-bottom:.5rem; margin-bottom: 2.6rem" id="warnList">
-        <div class="spinner-border text-secondary" style="margin-left:1.2rem; margin-top:2.5rem; margin-bottom:1.7rem" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+        <div style="margin-bottom:2.6rem">&nbsp;</div>
     </div>
 </div>
 <div class="mt-2">
@@ -174,13 +177,15 @@
 </div>
 <!-- Modal -->
 <div class="modal fade" id="myModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" style="margin-left:auto; margin-right:auto; max-width:20rem">
         <div class="modal-content">
-            <div class="modal-body" style="margin:0; padding:0" id="modalBody">
+            <div class="modal-body"  style="margin-left:auto; margin-right:auto; max-width:18rem" >
+            <div id="modalBody">
 
             </div>
-            <div class="modal-footer"  style="margin-left:15%; margin-right:15%">
-                <button type="button" class="btn btn-outline-warning w-100" onclick="location.href = '/api/district/'+ modalBody.children[0].innerText">지도로 보기</button>
+            <div style="margin-left:15%; margin-right:15%; transform: rotate(.04deg)">
+                <button type="button" class="btn btn-warning w-100 mb-3" onclick="location.href = '/api/district/'+ modalBody.children[0].innerText">지도로 보기</button>
+            </div>
             </div>
         </div>
     </div>
@@ -191,9 +196,18 @@
 </body>
 <script>
     const safeList = document.getElementById('safeList');
+    const timeBtn = document.getElementById('timeBtn');
     const warnList = document.getElementById('warnList');
     const timeInput = document.getElementById('timeInput');
     const modalBody = document.getElementById('modalBody');
+    function loader() {
+    return `
+                <div style="margin-left:1.2rem; height: ${document.querySelector('.predictLists').clientHeight}px; margin-top: auto; margin-bottom: auto">
+                    <div class="spinner-border text-secondary" style="" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>`
+    }
     var fetchResult = '', newArr = [];
     window.onload = async () => {
         fetchResult = await postFetcher('/api/getPredictAll', {});
@@ -208,7 +222,6 @@
         safeList.innerHTML = '';
         warnList.innerHTML = '';
         newArr = [arr.slice(0, 28),arr.slice(28, 56),arr.slice(56, 84),arr.slice(84, 113)]
-        console.log(newArr);
 
         safeAndNormal = newArr[predictTime]
             .filter((item) => item.predictCongestion === '여유' || item.predictCongestion === '보통')
@@ -235,26 +248,37 @@
         if(warnAndDanger.length === 0) {
             warnList.innerHTML = `<div style="height:6.7rem"><div style="margin-left: .75rem; transform:rotate(0.04deg)">예상 혼잡 지역이 없어요!</div></div>`
         }
-        console.log(safeAndNormal);
-        console.log(warnAndDanger);
 
         timeInput.innerHTML = newArr[predictTime][0].predictTime.substring(11,17);
     }
 
+    timeBtn.addEventListener('click', () => {
+        const timeCount = parseInt(timeBtn.dataset.no);
+        if(timeCount !== 3) {
+            safeList.innerHTML = loader();
+            warnList.innerHTML = loader();
+            timeBtn.dataset.no = timeCount + 1;
+            setTimeout(() => {predictRender(timeBtn.dataset.no)}, 100);
 
+        } else {
+            safeList.innerHTML = loader();
+            warnList.innerHTML = loader();
+            timeBtn.dataset.no = 0;
+            setTimeout(() => {predictRender(0)}, 100);
+        }
+    });
     function addList(color, district, storeCount) {
         return `
-    <div class="card rounded button2 shadow-sm" onclick="graphRender(this)" data-name="${district}">
+    <div class="predictLists card rounded button2 shadow-sm" onclick="graphRender(this)" data-name="${district}">
       <div class="card-body" style="text-overflow: ellipsis">
-        <div class="card-title" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap">${district}</div>
-        <button class="btn" style="margin-left:auto; background-color:${color}; color: white">${storeCount}곳</button>
+        <div class="card-title" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${district}</div>
+        <button class="btn" style="margin-left:auto; margin-top:.375rem; background-color:${color}; color: white;">${storeCount}곳</button>
       </div>
     </div>
         `;
     }
 
     function graphRender(element) {
-        console.log(element.dataset.name);
         const timeResult = [
             newArr[0].filter(i => i.districtName === element.dataset.name)[0].predictTime.substring(11,13) + "시",
             newArr[1].filter(i => i.districtName === element.dataset.name)[0].predictTime.substring(11,13) + "시",
@@ -267,29 +291,27 @@
             newArr[2].filter(i => i.districtName === element.dataset.name)[0].predictCongestion,
             newArr[3].filter(i => i.districtName === element.dataset.name)[0].predictCongestion,
         ]
-        console.log(timeResult);
-        console.log(congestionResult);
         let graph = ``, time = ``;
         congestionResult.forEach(item => {
             if(item === '여유') {
-                graph += `<div class="col-auto ms-1 me-1" style="margin-top:auto"><div style="width:1rem; height: 3rem; background-color:#1960ef; border-radius: 1rem; margin-top:auto"></div></div>`
+                graph += `<div class="col-auto ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 3rem; background-color:#1960ef; border-radius: 1rem; margin-top:auto"></div></div>`
             }
             else if(item === '보통') {
-                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1rem; height: 4.5rem; background-color:#7db249; border-radius: 1rem; margin-top:auto;"></div></div>`
+                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 4.5rem; background-color:#7db249; border-radius: 1rem; margin-top:auto;"></div></div>`
             }
             else if(item === '약간 붐빔') {
-                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1rem; height: 6rem; background-color:#fd9f28; border-radius: 1rem; margin-top:auto;"></div></div>`
+                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 6rem; background-color:#fd9f28; border-radius: 1rem; margin-top:auto;"></div></div>`
             }
             else if(item === '붐빔') {
-                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1rem; height: 7.5rem; background-color:#fc5230; border-radius: 1rem; margin-top:auto;"></div></div>`
+                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 7.5rem; background-color:#fc5230; border-radius: 1rem; margin-top:auto;"></div></div>`
             }
         })
         timeResult.forEach(item => {
-            time += `<div class="col-auto" style="padding-left:0; padding-right:0;width:3rem !important; text-align:center" style="margin-top:auto">${item}</div>`
+            time += `<div class="col-auto" style="padding-left:0; padding-right:0;width:3.5rem !important; text-align:center" style="margin-top:auto">${item}</div>`
 
         })
         modalBody.innerHTML = `
-            <h5 class="ms-3 my-3">
+            <h5 class="ms-3 mt-3 mb-4">
                 ${element.dataset.name}
             </h5>
             <div class="row justify-content-center mt-3" style="margin-left:auto; margin-right:auto; height: 7.5rem">

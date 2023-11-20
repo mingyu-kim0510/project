@@ -8,7 +8,7 @@ async function menubar() {
 
     if (sessionResult !== '') {
         menuBar.innerHTML = `
-    <nav class="navbar justify-content-around fixed-bottom bg-body-tertiary align-center text-center float-center pb-1"
+    <nav class="navbar justify-content-around fixed-bottom bg-body-tertiary align-center text-center float-center pb-1 rounded-top"
         >
         <div class="nav-item" style="width:5rem; padding-top:.375rem">
             <a class='text-decoration-none text-reset' href="/map">
@@ -32,7 +32,7 @@ async function menubar() {
     `;
     } else {
         menuBar.innerHTML = `
-    <nav class="navbar justify-content-around fixed-bottom bg-body-tertiary align-center text-center float-center pb-1"
+    <nav class="navbar justify-content-around fixed-bottom bg-body-tertiary align-center text-center float-center pb-1 rounded-top"
         style="transform: rotate(0.04deg)">
         <div class="nav-item" style="width:5rem; padding-top:.375rem">
             <a class='text-decoration-none text-reset' href="/map">

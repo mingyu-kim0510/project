@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" >
     <title>회원가입</title>
     <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <link
@@ -106,8 +106,8 @@ function pwChecker() {
 
 submitBtn.addEventListener('click', () => {
     console.log('login button in...')
-    if (userIdCheck.style.color === 'blue'
-        && pw.style.color !== 'red'
+    if (userIdCheck.innerHTML === '사용 가능한 아이디 입니다'
+        && pw.innerHTML !== '비밀번호가 일치하지 않습니다'
         && o.value !== ''
         && re.value !== '') {
         fetch('/signup', {
