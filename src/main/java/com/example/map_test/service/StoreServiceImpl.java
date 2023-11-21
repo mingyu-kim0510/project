@@ -73,16 +73,6 @@ public class StoreServiceImpl implements StoreService {
                 .map(entity -> entity.toStoreResDto(0)).orElse(null);
     }
 
-    // 예측 자료 찾기
-    @Override
-    public List<StoreResDto> findStorePredict(StoreReqDto dto, int predictTime) {
-        // 인구데이터 구역 내 예측자료 제공 여부
-        var temp = storeRepository.findByDistrictEntityNotNull().stream()
-                    .filter(i -> !i.getDistrictEntity().getPredictEntityList().isEmpty());
-        List<StoreResDto> dtoList = new ArrayList<>();
-        temp.forEach(item -> dtoList.add(item.toStoreResDto(1)));
-        return dtoList;
-    }
 
     @Override
     public StorePredictDto findStorePredictOne(StoreReqDto dto) {
@@ -94,12 +84,20 @@ public class StoreServiceImpl implements StoreService {
                 StorePredictDto predictDto = new StorePredictDto();
                 predictDto.setStoreName(temp.get().getStoreName());
                 predictDto.setStoreIdx(temp.get().getStoreIdx());
+                predictDto.setCongestion(temp.get().getDistrictEntity().getDistDensity());
+                predictDto.setPredictTime(temp2.get(0).getPredictTime());
                 predictDto.setCongestion1(temp2.get(0).getPredictCongestion());
                 predictDto.setCongestion2(temp2.get(1).getPredictCongestion());
                 predictDto.setCongestion3(temp2.get(2).getPredictCongestion());
                 predictDto.setCongestion4(temp2.get(3).getPredictCongestion());
                 return predictDto;
             }
+
+            StorePredictDto predictDto = new StorePredictDto();
+            predictDto.setStoreName(temp.get().getStoreName());
+            predictDto.setStoreIdx(temp.get().getStoreIdx());
+            predictDto.setCongestion(temp.get().getDistrictEntity().getDistDensity());
+            return predictDto;
         }
 
         return new StorePredictDto();

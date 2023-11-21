@@ -67,11 +67,6 @@ public class MapController {
     public StorePredictDto getPredictOne(@RequestBody StoreReqDto dto) {
         return storeService.findStorePredictOne(dto);
     }
-    @PostMapping("/getPredict")
-    public List<StoreResDto> getPredictPin(StoreReqDto dto) {
-        int test = 1;
-        return storeService.findStorePredict(dto, test);
-    }
     @GetMapping("/map/init")
     public void initSession (HttpSession session) {
         session.setAttribute("option", "");

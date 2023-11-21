@@ -130,7 +130,7 @@ async function mapRender(result, mapOption, positions) {
                 tempLat = '',
                 tempLng = '',
                 tempUrl = '',
-                tempTel = '',
+                tempCategory = '',
                 tempLike = false;
             result.map((item) => {
                 if (item.storeIdx == marker.Gb) {
@@ -138,12 +138,11 @@ async function mapRender(result, mapOption, positions) {
                     tempLat = item.storeLat;
                     tempLng = item.storeLon;
                     tempUrl = item.storeUrl;
-                    tempTel = item.storeTel;
+                    tempCategory = item.storeCategory;
                     tempLike = item.likeResult;
                     return;
                 }
             });
-            if(tempTel == null) tempTel = ''
             // 음식점 정보 + 찜 여부 확인하기
             let result2 = await postFetcher('/like/getOne', {
                     storeIdx: marker.Gb,
@@ -157,13 +156,26 @@ async function mapRender(result, mapOption, positions) {
                 star = getLike(result2.likeResult);
             }
 
+            let fetchResult = await postFetcher('/api/getPredictOne', {storeIdx:marker.Gb});
+            const predComment = predictComment(fetchResult);
             // 음식점 정보 플로팅 띄우기
-            floatingInfo.innerHTML = await floatInfo (result2.storeName, tempAddr, star, tempUrl, tempTel, marker.Gb);
+            floatingInfo.innerHTML = await floatInfo (result2.storeName, star, tempUrl, tempCategory, tempAddr, marker.Gb, predComment);
+            const infoHeight = document.querySelector('.float-info').offsetHeight + 200 + "px";
+            predGraph.style.bottom = `calc(${infoHeight} + .375rem)`
+            graphBackground.style.bottom = `calc(${infoHeight} + .1rem)`
+            predGraph.style.right = "1rem"
+
+            predGraph.innerHTML = predictGraph(fetchResult);
+            console.log(predComment)
+
+            floatingInfo.style.display = 'block';
+            predGraph.style.display = 'block';
+            if(predComment !== "<div>예측 자료를 지원하지 않아요</div>") graphBackground.style.display = 'block';
+            else  graphBackground.style.display = 'none';
 
             const starBtn = document.getElementById('starBtn');
             starBtn.innerHTML = star;
             // 음식점 정보 none -> block
-            floatingInfo.style.display = 'block';
 
             // 지도 좌표 마커로 이동하기
 
@@ -178,12 +190,14 @@ async function mapRender(result, mapOption, positions) {
     function touchStartListener() {
         return function () {
             floatingInfo.style.display = 'none';
+            predGraph.style.display = 'none';
+            graphBackground.style.display = 'none';
         };
     }
 
     // 오프캔버스에 검색결과 출력
     storeList.innerHTML = '';
-    if(result[0].predictTime !== null) {
+    if(result[0].predictTime !== null && result[0].predictTime !== undefined) {
         const predictTime = result[0].predictTime;
         offcanvasTitle.innerHTML = "검색결과 (" + predictTime.substring(11,13) + "시)";
     }
@@ -194,12 +208,12 @@ async function mapRender(result, mapOption, positions) {
         else if (item.storeCongestion != null) congestion = item.storeCongestion;
         else congestion = '미제공'
         return acc += `
-                <div class="card mb-3" data-no="${item.storeIdx}">
+                <div class="card mb-3 float-info" data-no="${item.storeIdx}">
                     <div class="card-header">
                         <div class="row justify-content-between">
                             <div class="col-8">
                                 <a
-                                 style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis"
+                                 style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis; transform:rotate(0.04deg); font-family: 'NanumSquareBold'; "
                                 onclick="
                                     map.setCenter(new kakao.maps.LatLng(${item.storeLat}, ${item.storeLon}));
                                     map.setLevel(3);
@@ -208,7 +222,24 @@ async function mapRender(result, mapOption, positions) {
                                     // 음식점 정보 none -> block
                                     floatingInfo.style.display = 'block';
                                     async function floatRender () {
-                                        floatingInfo.innerHTML = await floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}','${item.storeIdx}');
+                                        let fetchResult = await postFetcher('/api/getPredictOne', {storeIdx:${item.storeIdx}});
+                                        const predComment = predictComment(fetchResult);
+                                        floatingInfo.innerHTML = await floatInfo('${item.storeName}', star, '${item.storeUrl}', '${item.storeCategory}', '${item.storeNewAddr}','${item.storeIdx}', predComment);
+                                        const infoHeight = document.querySelector('.float-info').offsetHeight + 200 + 'px';
+                                        predGraph.style.bottom = 'calc(' + infoHeight + ' + .375rem)'
+                                        graphBackground.style.bottom = 'calc(' + infoHeight + ' + 1rem)'
+                                        predGraph.style.right = '1rem'
+                            
+                                        predGraph.innerHTML = predictGraph(fetchResult);
+                                        console.log(predComment)
+                            
+                                        floatingInfo.style.display = 'block';
+                                        predGraph.style.display = 'block';
+                                        if(predComment !== '<div>예측 자료를 지원하지 않아요</div>') graphBackground.style.display = 'block';
+                                        else  graphBackground.style.display = 'none';
+                            
+                                        const starBtn = document.getElementById('starBtn');
+                                        starBtn.innerHTML = star;
                                     };
                                     floatRender();
                                     
@@ -221,7 +252,7 @@ async function mapRender(result, mapOption, positions) {
                     </div>
                     <div class="card-body">
                         <blockquote class="blockquote mb-0">
-                            <p style="font-size:1rem">${item.storeNewAddr}</p>
+                            <p style="font-size:1rem; transform:rotate(0.04deg); font-family: 'NanumSquareBold';">${item.storeNewAddr}</p>
                         </blockquote>
                     </div>
                 </div>
@@ -270,19 +301,16 @@ function colorPicker(element, state) {
 }
 
 // 플로팅 창 내용 넣기
-async function floatInfo (storeName, addr, star, url, tel, storeIdx) {
-    let fetchResult = await postFetcher('/api/getPredictOne', {storeIdx});
-    console.log(fetchResult)
-    const predComment = predictComment(fetchResult);
+async function floatInfo (storeName, star, url, category, addr, storeIdx, predComment) {
     let loadStar = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}" style="display:none">${star}</a>`
     if(UserResult !== '') loadStar = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">${star}</a>`
     return `
     <div class='shadow-sm card custom_zoomcontrol'
-        style="bottom: calc(3.5rem + 11%); width:95%">
-        <div class="card-body w-100">
+        style="bottom: calc(3.5rem + 11%); width:95%;">
+        <div class="card-body w-100" id="renderedCard">
             <div class="row justify-content-between">
                 <div class="col-auto"  style="text-overflow: ellipsis; max-width:67%" >
-                    <div class="card-title text-start fw-bold" style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis">${storeName}</div>
+                    <div class="card-title text-start fw-bold" style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis; font-family: 'NanumSquareExtraBold'; transform: rotate(0.04deg)">${storeName}</div>
                 </div>
                 <div class="col-auto" style="margin-left: auto; margin-right:0">
                     <div class="row">
@@ -298,11 +326,9 @@ async function floatInfo (storeName, addr, star, url, tel, storeIdx) {
                     </div>
                 </div>
             </div>
-            <p class="card-text text-start text-truncate" style="font-size:0.8rem; margin-bottom: 0.375rem">${addr.substring(5)}</p>
-            <p class="card-text text-start text-truncate" style="font-size:0.8rem">${tel}</p>
-            
-            ${predictDot(fetchResult)}
-            <div>${predComment}</div>
+            <p class="card-text text-start text-truncate mb-0" style="font-size:0.8rem; font-family: 'NanumSquareBold'; transform: rotate(0.04deg)">${category}</p>
+            <hr class="my-2">
+            <div class="card-text flex-nowrap" style="font-size:1.1rem; text-overflow: ellipsis; font-family: 'NanumSquareBold'; transform: rotate(0.04deg)">${predComment}</div>
         </div>
     </div>
     `
@@ -453,9 +479,9 @@ safeToggle.addEventListener('click', ()=>{
 })
 
 function predictComment (fetchResult) {
-    if(fetchResult.congestion1 == null) return `<div></div>`
+    if(fetchResult.congestion1 == null) return `<div>예측 자료를 지원하지 않아요</div>`
 
-    let fetchArr = [fetchResult.congestion1, fetchResult.congestion2,
+    let fetchArr = [fetchResult.congestion, fetchResult.congestion1, fetchResult.congestion2,
     fetchResult.congestion3, fetchResult.congestion4];
 
     if (fetchArr[0] === '여유' || fetchArr[0] === '보통') {
@@ -468,10 +494,12 @@ function predictComment (fetchResult) {
             safeCount = Math.min(toWarnCount, toDangerCount);
         }
 
-        if(safeCount !== -1) {
-            return `<div>${safeCount + 1}시간 내로 붐빌 예정이에요</div>`
-        } else {
+        if(safeCount === -1) {
             return `<div>당분간은 여유로울 예정이에요</div>`
+        } else if (safeCount === 1) {
+            return `<div>곧 붐빌 예정이에요</div>`
+        } else {
+            return `<div>${safeCount}시간 내로 붐빌 예정이에요</div>`
         }
     } else if (fetchArr[0] === '약간 붐빔' || fetchArr[0] === '붐빔') {
         var warnCount = 0;
@@ -482,24 +510,99 @@ function predictComment (fetchResult) {
         } else {
             warnCount = Math.min(toSafeCount, toGoodCount);
         }
-        if(warnCount !== -1) {
-            return `<div>${warnCount + 1}시간 안으로 여유로워질 예정이에요</div>`
-        } else {
+        if(warnCount === -1) {
             return `<div>계속 붐빌 예정이에요</div>`
+        } else if (warnCount === 1) {
+            return `<div>곧 여유로워질 예정이에요</div>`
+        } else {
+            return `<div>${warnCount}시간 안으로 여유로워질 예정이에요</div>`
         }
     }
 }
 
-function predictDot (fetchResult) {
-    let fetchArr = [fetchResult.congestion1, fetchResult.congestion2,
+function predictGraph (fetchResult) {
+    let fetchArr = [fetchResult.congestion, fetchResult.congestion1, fetchResult.congestion2,
         fetchResult.congestion3, fetchResult.congestion4];
+    let fetchTime = 25;
     let results = ``;
-    fetchArr.forEach(item => {
-        if(item === '여유') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #1960ef"></button>`
-        else if(item === '보통') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #7db249"></button>`
-        else if(item === '약간 붐빔') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #fd9f28"></button>`
-        else if(item === '붐빔') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #fc5230"></button>`
-        else results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #9f9f9f"></button>`
+
+    if(fetchResult.predictTime !== null) fetchTime = parseInt(fetchResult.predictTime.substring(11,13));
+    fetchArr.forEach((item,i) => {
+        if (fetchResult.predictTime !== null){
+
+            if(item === '여유') {
+                results += `
+                    <div
+                        class="row justify-content-end mt-1"
+                        style="margin-left: auto; margin-right: auto; width: 30rem"
+                    >
+                        <div class="col-auto mx-1 my-auto" style="padding-left: 0.333rem; padding-right: 0.333rem">
+                            <div
+                                class="my-auto"
+                                style="width: 2rem; height: 1rem; background-color: #1960efd9; border-radius: 0.66rem"
+                            ></div>
+                        </div>`
+            }
+            else if(item === '보통') {
+                results += `
+                    <div
+                        class="row justify-content-end mt-1"
+                        style="margin-left: auto; margin-right: auto; width: 30rem"
+                    >
+                        <div class="col-auto mx-1 my-auto" style="padding-left: 0.333rem; padding-right: 0.333rem">
+                            <div
+                                class="my-auto"
+                                style="width: 3rem; height: 1rem; background-color: #7db249d9; border-radius: 0.66rem"
+                            ></div>
+                        </div>`
+            }
+            else if(item === '약간 붐빔') {
+                results += `
+                    <div class="row justify-content-end mt-1 mx-auto" style="width: 30rem">
+                        <div
+                            class="col-auto mx-1 my-auto"
+                            style="margin-top: auto; padding-left: 0.333rem; padding-right: 0.333rem"
+                        >
+                            <div
+                                class="my-auto"
+                                style="width: 4rem; height: 1rem; background-color: #fd9f28d9; border-radius: 0.66rem"
+                            ></div>
+                        </div>`
+            }
+            else if(item === '붐빔') {
+                results += `
+                    <div class="row justify-content-end mt-1 mx-auto" style="width: 30rem">
+                        <div class="col-auto mx-1 my-auto" style="padding-left: 0.333rem; padding-right: 0.333rem">
+                            <div
+                                class="my-auto"
+                                style="width: 5rem; height: 1rem; background-color: #fc5230d9; border-radius: 0.66rem"
+                            ></div>
+                        </div>`
+            }
+
+
+            if(i === 0) {
+                results += `
+                        <div
+                            class="col-auto mx-1 my-auto align-middle p-0"
+                            style="width: 2.18rem !important; text-align: center; font-size: 0.9rem; font-family: 'NanumSquareBold';"
+                        >
+                            현재
+                        </div>
+                    </div>`
+            } else {
+                results += `
+                        <div
+                            class="col-auto mx-1 my-auto align-middle p-0"
+                            style="width: 2.18rem !important; text-align: center; font-size: 0.9rem; font-family: 'NanumSquareBold';"
+                        >
+                            ${fetchTime}시
+                        </div>
+                    </div>`
+                if(fetchTime === 23) fetchTime = 0;
+                else if (fetchTime !== 25) fetchTime++;
+            }
+        }
     })
     return results
 }

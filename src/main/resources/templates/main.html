@@ -351,6 +351,9 @@
                     색으로 예상 혼잡도를 쉽게 파악할 수 있어요
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
         </div>
     </div>
 </div>
@@ -458,20 +461,20 @@
         let graph = ``, time = ``;
         congestionResult.forEach(item => {
             if(item === '여유') {
-                graph += `<div class="col-auto ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 3rem; background-color:#1960ef; border-radius: 1rem; margin-top:auto"></div></div>`
+                graph += `<div class="col-auto" style="margin-top:auto"><div style="width:1.5rem; height: 3rem; background-color:#1960ef; border-radius: 1rem; margin-top:auto"></div></div>`
             }
             else if(item === '보통') {
-                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 4.5rem; background-color:#7db249; border-radius: 1rem; margin-top:auto;"></div></div>`
+                graph += `<div class="col-auto" style="margin-top:auto"><div style="width:1.5rem; height: 4.5rem; background-color:#7db249; border-radius: 1rem; margin-top:auto;"></div></div>`
             }
             else if(item === '약간 붐빔') {
-                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 6rem; background-color:#fd9f28; border-radius: 1rem; margin-top:auto;"></div></div>`
+                graph += `<div class="col-auto" style="margin-top:auto"><div style="width:1.5rem; height: 6rem; background-color:#fd9f28; border-radius: 1rem; margin-top:auto;"></div></div>`
             }
             else if(item === '붐빔') {
-                graph += `<div class="col-auto  ms-1 me-1" style="margin-top:auto"><div style="width:1.5rem; height: 7.5rem; background-color:#fc5230; border-radius: 1rem; margin-top:auto;"></div></div>`
+                graph += `<div class="col-auto" style="margin-top:auto"><div style="width:1.5rem; height: 7.5rem; background-color:#fc5230; border-radius: 1rem; margin-top:auto;"></div></div>`
             }
         })
         timeResult.forEach(item => {
-            time += `<div class="col-auto" style="padding-left:0; padding-right:0;width:3.5rem !important; text-align:center" style="margin-top:auto">${item}</div>`
+            time += `<div class="col-auto" style="padding-left:0; padding-right:0;width:3rem !important; text-align:center" style="margin-top:auto">${item}</div>`
 
         })
         modalBody.innerHTML = `

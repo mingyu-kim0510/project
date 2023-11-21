@@ -10,12 +10,13 @@ const floatingInfo = document.getElementById('floatingInfo'); // 음식점 정�
 const reRenderBtn = document.getElementById('reRenderBtn'); // 지역 내 재검색 버튼
 const reRenderBtn2 = document.getElementById('reRenderBtn2'); // 지역 내 재검색 버튼
 const getHere = document.getElementById('getHere'); // 현위치 버튼
-const timeBtn = document.getElementById('timeBtn'); // 혼잡도 예측 버특
-const likeBtn = document.getElementById('likeBtn');
-const category2 = document.getElementById('category2');
-const category3 = document.getElementById('category3');
-const apiToggle = document.getElementById('apiToggle');
-const safeToggle = document.getElementById('safeToggle');
+const likeBtn = document.getElementById('likeBtn'); // 찜 버튼
+const category2 = document.getElementById('category2'); // 카테고리 2
+const category3 = document.getElementById('category3'); // 카테고리 3
+const apiToggle = document.getElementById('apiToggle'); // 혼잡도 토글
+const safeToggle = document.getElementById('safeToggle'); // 여유 토글
+const predGraph = document.getElementById('predGraph'); // 혼잡도 그래프
+const graphBackground = document.getElementById('graphBackground'); // 혼잡도 그래프
 var category1 = '';
 var marker = {};
 var map = new kakao.maps.Map(mapContainer, {
@@ -122,11 +123,6 @@ reRenderBtn2.addEventListener('click', async () => {
     searchVal.value = '';
 });
 
-// 예측지표 버튼
-timeBtn.addEventListener('click', async ()=>{
-    const result = await postFetcher('/api/getPredict')
-    await mapCalc(result, null, null,1);
-})
 
 // 찜 목록만 검색
 likeBtn.addEventListener('click', async ()=>{

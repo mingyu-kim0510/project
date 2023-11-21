@@ -15,6 +15,8 @@ import java.util.List;
 public class StorePredictDto {
     private Long storeIdx;
     private String storeName;
+    private String predictTime;
+    private String congestion;
     private String congestion1;
     private String congestion2;
     private String congestion3;

@@ -20,6 +20,7 @@ public class favResDto {
     private String storeTel;
     private Double storeLat;
     private Double storeLon;
+    private String storeCategory;
     private String storeCongestion;
     private String predictCongestion;
     public static favResDto toFavDto (LikeEntity entity){
@@ -29,6 +30,7 @@ public class favResDto {
                     .storeIdx(entity.getStoreEntity().getStoreIdx())
                     .storeName(entity.getStoreEntity().getStoreName())
                     .storeUrl(entity.getStoreEntity().getStoreUrl())
+                    .storeCategory(entity.getStoreEntity().getStoreCategory())
                     .storeNewAddr(entity.getStoreEntity().getStoreNewAddr())
                     .storeLat(entity.getStoreEntity().getStoreLat())
                     .storeLon(entity.getStoreEntity().getStoreLon())
@@ -40,6 +42,7 @@ public class favResDto {
                     .storeIdx(entity.getStoreEntity().getStoreIdx())
                     .storeName(entity.getStoreEntity().getStoreName())
                     .storeUrl(entity.getStoreEntity().getStoreUrl())
+                    .storeCategory(entity.getStoreEntity().getStoreCategory())
                     .storeNewAddr(entity.getStoreEntity().getStoreNewAddr())
                     .storeLat(entity.getStoreEntity().getStoreLat())
                     .storeLon(entity.getStoreEntity().getStoreLon())

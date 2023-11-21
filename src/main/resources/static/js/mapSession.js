@@ -8,7 +8,6 @@ window.onload = async () => {
     UserResult = await UserSession.text();
 
     if (UserResult != '') {
-        document.getElementById('likeLabel').style.display = 'inline-block';
         document.getElementById('likeBtn').style.display = 'inline-block';
     }
 
