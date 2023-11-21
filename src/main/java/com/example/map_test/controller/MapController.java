@@ -1,9 +1,6 @@
 package com.example.map_test.controller;
 
-import com.example.map_test.dto.DistrictColorResDto;
-import com.example.map_test.dto.DistrictResDto;
-import com.example.map_test.dto.StoreReqDto;
-import com.example.map_test.dto.StoreResDto;
+import com.example.map_test.dto.*;
 import com.example.map_test.service.PeopleService;
 import com.example.map_test.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -36,18 +33,25 @@ public class MapController {
         response.sendRedirect("/map");
         session.setAttribute("option", option);
     }
-    @GetMapping("/district/{target}")
-    public void getStoresByDistrict(@PathVariable String target, HttpSession session, HttpServletResponse response) throws IOException {
+    @GetMapping("/district/{target}/{timeCount}")
+    public void getStoresByDistrict(@PathVariable String target,@PathVariable int timeCount, HttpSession session, HttpServletResponse response) throws IOException {
         response.sendRedirect("/map");
         session.setAttribute("district", target);
+        session.setAttribute("timeCount", timeCount);
     }
     @GetMapping("/map/category")
     public String getSession (HttpSession session) {
         return (String) session.getAttribute("option");
     }
     @GetMapping("/map/district")
-    public String getDistrictSession(HttpSession session) {
-        return (String) session.getAttribute("district");
+    public DistrictResDto getDistrictSession(HttpSession session) {
+        DistrictResDto dto = new DistrictResDto();
+        dto.setDistrictName((String) session.getAttribute("district"));
+        if (session.getAttribute("timeCount") != null) {
+            dto.setStoreCount((Integer) session.getAttribute("timeCount"));
+        }
+
+        return dto;
     }
 
     @PostMapping("/color")
@@ -59,7 +63,10 @@ public class MapController {
     public void getPinColor() {
         peopleService.getColor();
     }
-
+    @PostMapping("/getPredictOne")
+    public StorePredictDto getPredictOne(@RequestBody StoreReqDto dto) {
+        return storeService.findStorePredictOne(dto);
+    }
     @PostMapping("/getPredict")
     public List<StoreResDto> getPredictPin(StoreReqDto dto) {
         int test = 1;
@@ -69,12 +76,14 @@ public class MapController {
     public void initSession (HttpSession session) {
         session.setAttribute("option", "");
         session.setAttribute("district", "");
+        session.setAttribute("timeCount", 0);
     }
 
     @PostMapping("/getPredictAll")
     public List<DistrictResDto> getPredictAll() {
         return peopleService.findStorePredictByDistrict();
     }
+
 
 
 }

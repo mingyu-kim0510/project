@@ -1,10 +1,7 @@
 package com.example.map_test.service;
 
 import com.example.map_test.apis.PeopleApi;
-import com.example.map_test.dto.DistrictResDto;
-import com.example.map_test.dto.PeopleResDto;
-import com.example.map_test.dto.StoreReqDto;
-import com.example.map_test.dto.StoreResDto;
+import com.example.map_test.dto.*;
 import com.example.map_test.entity.DistrictEntity;
 import com.example.map_test.entity.StoreEntity;
 import com.example.map_test.repository.PeopleRepository;
@@ -88,9 +85,31 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public StorePredictDto findStorePredictOne(StoreReqDto dto) {
+        var temp = storeRepository.findByStoreIdx(dto.getStoreIdx());
+        if(temp.isPresent() && temp.get().getDistrictEntity() != null) {
+            if (!temp.get().getDistrictEntity().getPredictEntityList().isEmpty()) {
+                var temp2 =
+                        temp.get().getDistrictEntity().getPredictEntityList();
+                StorePredictDto predictDto = new StorePredictDto();
+                predictDto.setStoreName(temp.get().getStoreName());
+                predictDto.setStoreIdx(temp.get().getStoreIdx());
+                predictDto.setCongestion1(temp2.get(0).getPredictCongestion());
+                predictDto.setCongestion2(temp2.get(1).getPredictCongestion());
+                predictDto.setCongestion3(temp2.get(2).getPredictCongestion());
+                predictDto.setCongestion4(temp2.get(3).getPredictCongestion());
+                return predictDto;
+            }
+        }
+
+        return new StorePredictDto();
+    }
+
+    @Override
     public List<StoreResDto> findStoresByDistrict(StoreReqDto dto) {
         DistrictEntity entity = new DistrictEntity();
         List<StoreResDto> list = new ArrayList<>();
+
         log.info("searchVal : {}", dto.getSearchVal());
         entity.setDistName(dto.getSearchVal());
         var dist = peopleRepository.findByDistName(dto.getSearchVal());

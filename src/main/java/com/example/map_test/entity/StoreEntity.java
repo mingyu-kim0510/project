@@ -96,7 +96,6 @@ public class StoreEntity {
                     .storeCongestion(districtEntity.getDistDensity())
                     .build();
         } else {
-
             return StoreResDto.builder()
                     .storeIdx(storeIdx)
                     .storeName(storeName)

@@ -4,6 +4,7 @@
 const category1List = document.querySelectorAll('.scroll_control'); // category1의 버튼들
 const mapContainer = document.getElementById('map'); // 지도를 표시할 div
 const searchVal = document.getElementById('searchVal'); // 검색값
+const offcanvasTitle = document.getElementById('offcanvasTitle'); // 검색결과 타이틀
 const storeList = document.getElementById('innerList'); // 검색결과 내용 리스트
 const floatingInfo = document.getElementById('floatingInfo'); // 음식점 정보 플로팅
 const reRenderBtn = document.getElementById('reRenderBtn'); // 지역 내 재검색 버튼
@@ -16,7 +17,6 @@ const category3 = document.getElementById('category3');
 const apiToggle = document.getElementById('apiToggle');
 const safeToggle = document.getElementById('safeToggle');
 var category1 = '';
-var clusterer = null;
 var marker = {};
 var map = new kakao.maps.Map(mapContainer, {
     center: new kakao.maps.LatLng(37.554842, 126.9717319), // 지도의 중심좌표
@@ -60,6 +60,9 @@ searchVal.addEventListener('keypress', async function search(e) {
 
         // 검색 결과로 맵핀 계산
         await mapCalc(result,null,null, null);
+
+        offcanvasTitle.innerHTML = `"${searchVal.value}"` + " 검색결과";
+        searchVal.value = '';
     }
 });
 // 지역내 재검색
@@ -84,6 +87,9 @@ reRenderBtn.addEventListener('click', async () => {
         isPeopleApi: bool2int(apiToggle.checked, safeToggle.checked)
     });
     await mapCalc(result, false, 0, null);
+    if(searchVal.innerHTML !== "") offcanvasTitle.innerHTML = `"${searchVal.value}"` + " 검색결과";
+    else offcanvasTitle.innerHTML = "검색결과";
+    searchVal.value = '';
 });
 
 // 지역내 재검색 (콜랩스 내 버튼)
@@ -111,6 +117,9 @@ reRenderBtn2.addEventListener('click', async () => {
     });
     await mapCalc(result, false, 0, null);
     $('#collapseExample').collapse('hide');
+    if(searchVal.innerHTML !== "") offcanvasTitle.innerHTML = `"${searchVal.value}"` + " 검색결과";
+    else offcanvasTitle.innerHTML = "검색결과";
+    searchVal.value = '';
 });
 
 // 예측지표 버튼
@@ -126,11 +135,20 @@ likeBtn.addEventListener('click', async ()=>{
     if (apiToggle.checked) {
         const result = data.filter(item => item.storeCongestion != null)
         await mapCalc(result, null, null, null);
+        if(searchVal.innerHTML !== "") offcanvasTitle.innerHTML = `"${searchVal.value}"` + " 검색결과";
+        else offcanvasTitle.innerHTML = "검색결과";
+        searchVal.value = '';
     } else if (safeToggle.checked) {
         const result = data.filter(item => item.storeCongestion === "여유")
         await mapCalc(result, null, null, null);
+        if(searchVal.innerHTML !== "") offcanvasTitle.innerHTML = `"${searchVal.value}"` + " 검색결과";
+        else offcanvasTitle.innerHTML = "검색결과";
+        searchVal.value = '';
     } else {
         await mapCalc(data, null, null, null);
+        if(searchVal.innerHTML !== "") offcanvasTitle.innerHTML = `"${searchVal.value}"` + " 검색결과";
+        else offcanvasTitle.innerHTML = "검색결과";
+        searchVal.value = '';
     }
 })
 

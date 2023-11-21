@@ -158,7 +158,7 @@ async function mapRender(result, mapOption, positions) {
             }
 
             // 음식점 정보 플로팅 띄우기
-            floatingInfo.innerHTML = floatInfo (result2.storeName, tempAddr, star, tempUrl, tempTel);
+            floatingInfo.innerHTML = await floatInfo (result2.storeName, tempAddr, star, tempUrl, tempTel, marker.Gb);
 
             const starBtn = document.getElementById('starBtn');
             starBtn.innerHTML = star;
@@ -183,6 +183,11 @@ async function mapRender(result, mapOption, positions) {
 
     // 오프캔버스에 검색결과 출력
     storeList.innerHTML = '';
+    if(result[0].predictTime !== null) {
+        const predictTime = result[0].predictTime;
+        offcanvasTitle.innerHTML = "검색결과 (" + predictTime.substring(11,13) + "시)";
+    }
+
     storeList.innerHTML = result.reduce((acc, item) => {
         let congestion = null;
         if (item.predictCongestion != null) congestion = item.predictCongestion
@@ -192,15 +197,21 @@ async function mapRender(result, mapOption, positions) {
                 <div class="card mb-3" data-no="${item.storeIdx}">
                     <div class="card-header">
                         <div class="row justify-content-between">
-                            <div class="col-7">
-                                <a onclick="
+                            <div class="col-8">
+                                <a
+                                 style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis"
+                                onclick="
                                     map.setCenter(new kakao.maps.LatLng(${item.storeLat}, ${item.storeLon}));
                                     map.setLevel(3);
                                     $('#offcanvasExample').offcanvas('hide');
                                     const star = getLike(${item.likeResult});
                                     // 음식점 정보 none -> block
                                     floatingInfo.style.display = 'block';
-                                    floatingInfo.innerHTML = floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}');
+                                    async function floatRender () {
+                                        floatingInfo.innerHTML = await floatInfo('${item.storeName}', '${item.storeNewAddr}', star, '${item.storeUrl}', '${item.storeTel}','${item.storeIdx}');
+                                    };
+                                    floatRender();
+                                    
                                 ">
                                     ${item.storeName}
                                 </a>
@@ -259,9 +270,12 @@ function colorPicker(element, state) {
 }
 
 // 플로팅 창 내용 넣기
-function floatInfo (storeName, addr, star, url, tel) {
-    let starLoad = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}" style="display:none">${star}</a>`
-    if(UserResult !== '') starLoad = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">${star}</a>`
+async function floatInfo (storeName, addr, star, url, tel, storeIdx) {
+    let fetchResult = await postFetcher('/api/getPredictOne', {storeIdx});
+    console.log(fetchResult)
+    const predComment = predictComment(fetchResult);
+    let loadStar = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}" style="display:none">${star}</a>`
+    if(UserResult !== '') loadStar = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">${star}</a>`
     return `
     <div class='shadow-sm card custom_zoomcontrol'
         style="bottom: calc(3.5rem + 11%); width:95%">
@@ -273,7 +287,7 @@ function floatInfo (storeName, addr, star, url, tel) {
                 <div class="col-auto" style="margin-left: auto; margin-right:0">
                     <div class="row">
                         <div class="col-auto">
-                            ${starLoad}
+                            ${loadStar}
                         </div>
                         <div class="col-auto text-end align-end" style="margin-left: auto; margin-right:0">
                             <a onclick="if(${!!url}) {document.getElementById('framesrc').src='${url}';
@@ -286,6 +300,9 @@ function floatInfo (storeName, addr, star, url, tel) {
             </div>
             <p class="card-text text-start text-truncate" style="font-size:0.8rem; margin-bottom: 0.375rem">${addr.substring(5)}</p>
             <p class="card-text text-start text-truncate" style="font-size:0.8rem">${tel}</p>
+            
+            ${predictDot(fetchResult)}
+            <div>${predComment}</div>
         </div>
     </div>
     `
@@ -434,3 +451,55 @@ safeToggle.addEventListener('click', ()=>{
     allToggleLabel.style.border = '1px solid #0d6efd';
     allToggleLabel.style.color = '#0d6efd';
 })
+
+function predictComment (fetchResult) {
+    if(fetchResult.congestion1 == null) return `<div></div>`
+
+    let fetchArr = [fetchResult.congestion1, fetchResult.congestion2,
+    fetchResult.congestion3, fetchResult.congestion4];
+
+    if (fetchArr[0] === '여유' || fetchArr[0] === '보통') {
+        var safeCount = 0
+        var toWarnCount = fetchArr.indexOf('약간 붐빔');
+        var toDangerCount = fetchArr.indexOf('붐빔');
+        if (Math.min(toWarnCount, toDangerCount) === -1) {
+            safeCount = Math.max(toWarnCount,toDangerCount);
+        } else {
+            safeCount = Math.min(toWarnCount, toDangerCount);
+        }
+
+        if(safeCount !== -1) {
+            return `<div>${safeCount + 1}시간 내로 붐빌 예정이에요</div>`
+        } else {
+            return `<div>당분간은 여유로울 예정이에요</div>`
+        }
+    } else if (fetchArr[0] === '약간 붐빔' || fetchArr[0] === '붐빔') {
+        var warnCount = 0;
+        var toSafeCount = fetchArr.indexOf('여유');
+        var toGoodCount = fetchArr.indexOf('보통')
+        if (Math.min(toSafeCount, toGoodCount) === -1) {
+            warnCount = Math.max(toSafeCount,toGoodCount);
+        } else {
+            warnCount = Math.min(toSafeCount, toGoodCount);
+        }
+        if(warnCount !== -1) {
+            return `<div>${warnCount + 1}시간 안으로 여유로워질 예정이에요</div>`
+        } else {
+            return `<div>계속 붐빌 예정이에요</div>`
+        }
+    }
+}
+
+function predictDot (fetchResult) {
+    let fetchArr = [fetchResult.congestion1, fetchResult.congestion2,
+        fetchResult.congestion3, fetchResult.congestion4];
+    let results = ``;
+    fetchArr.forEach(item => {
+        if(item === '여유') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #1960ef"></button>`
+        else if(item === '보통') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #7db249"></button>`
+        else if(item === '약간 붐빔') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #fd9f28"></button>`
+        else if(item === '붐빔') results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #fc5230"></button>`
+        else results += `<button type="button" class="btn btn-light mx-1" style="width:15px; height:4px; border-radius: 15px; background-color: #9f9f9f"></button>`
+    })
+    return results
+}

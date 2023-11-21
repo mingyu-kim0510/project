@@ -35,9 +35,11 @@ window.onload = async () => {
 
     // 구역 검색
     // 세션을 통해 값이 있는지 확인
-    const sessionDistrict = await getFetcher('/api/map/district')
+    const sessionDistrict = await fetch('/api/map/district',{ method: 'get' });
+    const sessionResult = await sessionDistrict.json();
 
-    if (sessionDistrict !== "") {
+    console.log(sessionResult);
+    if (sessionResult.districtName != null && sessionResult.districtName !== "") {
         // 검색기능 수행 전 스피너
         spinner();
 
@@ -46,7 +48,7 @@ window.onload = async () => {
 
         // request
         const result = await postFetcher('/api/store/district',
-            { searchVal: sessionDistrict, isPeopleApi: 1 });
+            { searchVal: sessionResult.districtName, isPeopleApi: parseInt(sessionResult.storeCount) + 1 });
         await getFetcher('/api/map/init');
 
         // 검색 결과로 맵핀 계산

@@ -22,6 +22,12 @@
     <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css">
     <style>
+        @font-face {
+            font-family: 'YClover-Bold';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_231029@1.1/YClover-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
         body {
             font-family: 'NanumSquareNeo';
 
@@ -179,7 +185,7 @@
             autocomplete="off"
             data-name="서양식"
     />
-    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="option5">서양식</label>
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="option5">양식</label>
     <input
             type="radio"
             class="btn-check scroll_control"
@@ -217,6 +223,18 @@
             data-name=""
     />
 </div>
+<!-- guide button -->
+<div tabindex="0" class="btn m-0 p-0 btn-light rounded-circle popover-dismiss" role="button"
+     data-bs-toggle="popover" data-bs-trigger="touchstart" data-bs-placement="left"
+     style="
+            position: absolute;
+            top: 8rem;
+            right: 0.75rem;
+            z-index: 2;
+            transform: translate(0, 0%);">
+    <img src="/img/question-circle.svg" style="width:1.5rem">
+</div>
+
 <!-- 옵션 콜랩스 -->
 <div class="collapse extra_collapse w-100" id="collapseExample">
     <div class="card card-body w-100" style="border: none;">
@@ -224,11 +242,15 @@
             <div>
                 <div class="mb-4 fw-bold h4" style="transform:rotate(0.04deg)">카테고리</div>
             </div>
+            <div class="row">
+                <div class="col-6 pe-1">
             <select class="form-select mb-3" id="category2" aria-label="Large select example">
                 <option selected value="" style="transform:rotate(0.04deg)">전체</option>
                 <option value="구이" style="transform:rotate(0.04deg)">구이</option>
                 <option value="해산물" style="transform:rotate(0.04deg)">해산물</option>
             </select>
+                </div>
+                <div class="col-6 ps-1">
             <select class="form-select mb-3" id="category3" aria-label="Large select example">
                 <option selected value="" style="transform:rotate(0.04deg)">전체</option>
                 <option value="카페" style="transform:rotate(0.04deg)">카페</option>
@@ -236,6 +258,8 @@
                 <option value="주점" style="transform:rotate(0.04deg)">주점</option>
                 <option value="비건" style="transform:rotate(0.04deg)">비건</option>
             </select>
+            </div>
+            </div>
             <div class="row justify-content-between">
                 <div class="col-auto">
                     <div class="mb-4 fw-bold h4" style="vertical-align: middle; transform:rotate(0.04deg)">표시옵션</div>
@@ -305,7 +329,7 @@
         style="height: 60%"
 >
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasExampleLabel">검색 결과</h5>
+        <h5 class="offcanvas-title" id="offcanvasTitle">검색 결과</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -326,5 +350,10 @@
 <script src="/js/mcore.min.js"></script>
 </body>
 <script>
+    const popover = new bootstrap.Popover('.popover-dismiss', {
+        trigger: 'touchstart',
+        html: true,
+        content: `<img src='/img/guide_color.png' alt='guide_color'>`
+    })
 </script>
 </html>

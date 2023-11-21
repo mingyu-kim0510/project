@@ -35,7 +35,10 @@ public class HomeController {
 
 
     @GetMapping("/")
-    public String mapTest() {
+    public String mapTest(HttpSession session) {
+        session.setAttribute("option", "");
+        session.setAttribute("district", "");
+        session.setAttribute("timeCount", 0);
         return "/main";
     }
     @GetMapping("/login")
@@ -57,7 +60,7 @@ public class HomeController {
     }
 
     @GetMapping("/main")
-    public void main(){
+    public void mainPage(){
     }
 
     @GetMapping("/likelist")
