@@ -135,7 +135,11 @@
 <div class="modal fade" id="guideModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="height:calc(100% + 3.5rem)">
-            <div id="guideModalBody" data-no="0" class="modal-body guide-container" style="margin:0; padding:0; transform: rotate(.04deg)">
+            <div class="modal-header">
+                <h5 class="modal-title">사용법</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="guideModalBody" class="modal-body guide-container m-0 px-0 py-3">
                 <div class="guide text-center p-3" style="margin-top:auto; margin-bottom:auto">
                     <div class="row justify-content-center">
                         <div class="col-auto" style="margin: auto;">
@@ -155,9 +159,6 @@
                     <img class="mt-2" src="/img/guide_map.png" alt="guide_map">
                     <div class="mt-3">그래프로 혼잡도를 확인할 수 있어요</div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -331,7 +332,7 @@
 <!-- 지도 -->
 <div id="map" style="position: relative; overflow: hidden; width: 100%; height: calc(100vh - 3.7rem)"></div>
 <div style="position: absolute; z-index:3; pointer-events: none; transform: rotate(.04deg)" id="predGraph"></div>
-<div style="position: absolute; z-index:2; pointer-events: none; transform: rotate(.04deg); background-color: #FFFFFF99; right: 1rem;
+<div style="position: absolute; z-index:2; pointer-events: none; transform: rotate(.04deg); background-color: #FFFFFFdd; right: 1rem;
             height: 8.25rem; width: 2.75rem" class="rounded" id="graphBackground"></div>
 <div class="text-center">
     <div id="floatingInfo" class="row text-center">

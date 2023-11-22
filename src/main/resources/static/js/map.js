@@ -127,7 +127,6 @@ reRenderBtn2.addEventListener('click', async () => {
 // 찜 목록만 검색
 likeBtn.addEventListener('click', async ()=>{
     var data = await postFetcher('/like/getAll')
-    console.log(apiToggle.checked)
     if (apiToggle.checked) {
         const result = data.filter(item => item.storeCongestion != null)
         await mapCalc(result, null, null, null);

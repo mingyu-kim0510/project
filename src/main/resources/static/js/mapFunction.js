@@ -152,7 +152,6 @@ async function mapRender(result, mapOption, positions) {
             if (UserResult === '') {
                 star = ``;
             } else {
-                console.log(result2.likeResult)
                 star = getLike(result2.likeResult);
             }
 
@@ -160,15 +159,14 @@ async function mapRender(result, mapOption, positions) {
             const predComment = predictComment(fetchResult);
             // 음식점 정보 플로팅 띄우기
             floatingInfo.innerHTML = await floatInfo (result2.storeName, star, tempUrl, tempCategory, tempAddr, marker.Gb, predComment);
-            const infoHeight = document.querySelector('.float-info').offsetHeight + 200 + "px";
-            predGraph.style.bottom = `calc(${infoHeight} + .375rem)`
-            graphBackground.style.bottom = `calc(${infoHeight} + .1rem)`
+            floatingInfo.style.display = 'block';
+            const floatElement = $( ".float-info" )
+            predGraph.style.bottom = `calc(${floatElement.prop( "scrollHeight" )}px + ${floatElement.css( "bottom" )} + 1rem)`
+            graphBackground.style.bottom = `calc(${floatElement.prop( "scrollHeight" )}px + ${floatElement.css( "bottom" )} + 1rem)`
             predGraph.style.right = "1rem"
 
             predGraph.innerHTML = predictGraph(fetchResult);
-            console.log(predComment)
 
-            floatingInfo.style.display = 'block';
             predGraph.style.display = 'block';
             if(predComment !== "<div>예측 자료를 지원하지 않아요</div>") graphBackground.style.display = 'block';
             else  graphBackground.style.display = 'none';
@@ -208,12 +206,12 @@ async function mapRender(result, mapOption, positions) {
         else if (item.storeCongestion != null) congestion = item.storeCongestion;
         else congestion = '미제공'
         return acc += `
-                <div class="card mb-3 float-info" data-no="${item.storeIdx}">
+                <div class="card mb-3" data-no="${item.storeIdx}">
                     <div class="card-header">
                         <div class="row justify-content-between">
-                            <div class="col-8">
+                            <div class="col-8" style=" transform:rotate(0.04deg);">
                                 <a
-                                 style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis; transform:rotate(0.04deg); font-family: 'NanumSquareBold'; "
+                                 style="display:block; white-space:nowrap; overflow:hidden; text-overflow: ellipsis; font-family: 'NanumSquareBold'; "
                                 onclick="
                                     map.setCenter(new kakao.maps.LatLng(${item.storeLat}, ${item.storeLon}));
                                     map.setLevel(3);
@@ -225,15 +223,14 @@ async function mapRender(result, mapOption, positions) {
                                         let fetchResult = await postFetcher('/api/getPredictOne', {storeIdx:${item.storeIdx}});
                                         const predComment = predictComment(fetchResult);
                                         floatingInfo.innerHTML = await floatInfo('${item.storeName}', star, '${item.storeUrl}', '${item.storeCategory}', '${item.storeNewAddr}','${item.storeIdx}', predComment);
-                                        const infoHeight = document.querySelector('.float-info').offsetHeight + 200 + 'px';
-                                        predGraph.style.bottom = 'calc(' + infoHeight + ' + .375rem)'
-                                        graphBackground.style.bottom = 'calc(' + infoHeight + ' + 1rem)'
+                                        floatingInfo.style.display = 'block';
+                                        const floatElement = $( '.float-info' )
+                                        predGraph.style.bottom = 'calc(' + floatElement.prop('scrollHeight') + 'px + ' + floatElement.css('bottom')+ '+' + '1rem)'
+                                        graphBackground.style.bottom = 'calc(' + floatElement.prop('scrollHeight') + 'px + ' + floatElement.css('bottom')+ '+' + '1rem)'
                                         predGraph.style.right = '1rem'
                             
                                         predGraph.innerHTML = predictGraph(fetchResult);
-                                        console.log(predComment)
                             
-                                        floatingInfo.style.display = 'block';
                                         predGraph.style.display = 'block';
                                         if(predComment !== '<div>예측 자료를 지원하지 않아요</div>') graphBackground.style.display = 'block';
                                         else  graphBackground.style.display = 'none';
@@ -251,8 +248,11 @@ async function mapRender(result, mapOption, positions) {
                         </div>
                     </div>
                     <div class="card-body">
-                        <blockquote class="blockquote mb-0">
-                            <p style="font-size:1rem; transform:rotate(0.04deg); font-family: 'NanumSquareBold';">${item.storeNewAddr}</p>
+                        <blockquote class="blockquote my-0" style=" transform:rotate(0.04deg);">
+                            <a class="my-1 text-decoration-none text-reset"
+                               style="font-size:1rem; font-family: 'NanumSquareBold';">${item.storeCategory}</a>
+                            <a style="font-size:1rem; font-family: 'NanumSquareBold';">&nbsp;/&nbsp</a>
+                            <a style="font-size:1rem; font-family: 'NanumSquare';">${item.storeNewAddr.substring(6, item.length).trim()}</a>
                         </blockquote>
                     </div>
                 </div>
@@ -305,7 +305,7 @@ async function floatInfo (storeName, star, url, category, addr, storeIdx, predCo
     let loadStar = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}" style="display:none">${star}</a>`
     if(UserResult !== '') loadStar = `<a id="starBtn" onclick="dataSend(this)" data-name="${addr}" data-store="${storeName}">${star}</a>`
     return `
-    <div class='shadow-sm card custom_zoomcontrol'
+    <div class='shadow-sm card custom_zoomcontrol float-info'
         style="bottom: calc(3.5rem + 11%); width:95%;">
         <div class="card-body w-100" id="renderedCard">
             <div class="row justify-content-between">
@@ -326,7 +326,9 @@ async function floatInfo (storeName, star, url, category, addr, storeIdx, predCo
                     </div>
                 </div>
             </div>
-            <p class="card-text text-start text-truncate mb-0" style="font-size:0.8rem; font-family: 'NanumSquareBold'; transform: rotate(0.04deg)">${category}</p>
+            <p class="card-text text-start text-truncate mb-0" style="font-size:0.8rem; font-family: 'NanumSquareBold'; transform: rotate(0.04deg)">
+                ${category}
+            </p>
             <hr class="my-2">
             <div class="card-text flex-nowrap" style="font-size:1.1rem; text-overflow: ellipsis; font-family: 'NanumSquareBold'; transform: rotate(0.04deg)">${predComment}</div>
         </div>
@@ -539,7 +541,7 @@ function predictGraph (fetchResult) {
                         <div class="col-auto mx-1 my-auto" style="padding-left: 0.333rem; padding-right: 0.333rem">
                             <div
                                 class="my-auto"
-                                style="width: 2rem; height: 1rem; background-color: #1960efd9; border-radius: 0.66rem"
+                                style="width: 2rem; height: 1rem; box-shadow: 0 .125rem .125rem #9f9f9fd9; background-color: #1960ef; border-radius: 0.66rem"
                             ></div>
                         </div>`
             }
@@ -552,7 +554,7 @@ function predictGraph (fetchResult) {
                         <div class="col-auto mx-1 my-auto" style="padding-left: 0.333rem; padding-right: 0.333rem">
                             <div
                                 class="my-auto"
-                                style="width: 3rem; height: 1rem; background-color: #7db249d9; border-radius: 0.66rem"
+                                style="width: 3rem; height: 1rem; box-shadow: 0 .125rem .125rem #9f9f9fd9; background-color: #7db249; border-radius: 0.66rem"
                             ></div>
                         </div>`
             }
@@ -565,7 +567,7 @@ function predictGraph (fetchResult) {
                         >
                             <div
                                 class="my-auto"
-                                style="width: 4rem; height: 1rem; background-color: #fd9f28d9; border-radius: 0.66rem"
+                                style="width: 4rem; height: 1rem; box-shadow: 0 .125rem .125rem #9f9f9fd9; background-color: #fd9f28; border-radius: 0.66rem"
                             ></div>
                         </div>`
             }
@@ -575,7 +577,7 @@ function predictGraph (fetchResult) {
                         <div class="col-auto mx-1 my-auto" style="padding-left: 0.333rem; padding-right: 0.333rem">
                             <div
                                 class="my-auto"
-                                style="width: 5rem; height: 1rem; background-color: #fc5230d9; border-radius: 0.66rem"
+                                style="width: 5rem; height: 1rem; box-shadow: 0 .125rem .125rem #9f9f9fd9; background-color: #fc5230; border-radius: 0.66rem"
                             ></div>
                         </div>`
             }
