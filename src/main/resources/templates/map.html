@@ -331,9 +331,11 @@
 
 <!-- 지도 -->
 <div id="map" style="position: relative; overflow: hidden; width: 100%; height: calc(100vh - 3.7rem)"></div>
+<!-- 예측 그래프 -->
 <div style="position: absolute; z-index:3; pointer-events: none; transform: rotate(.04deg)" id="predGraph"></div>
+<!-- 예측 그래프 배경 -->
 <div style="position: absolute; z-index:2; pointer-events: none; transform: rotate(.04deg); background-color: #FFFFFFdd; right: 1rem;
-            height: 8.25rem; width: 2.75rem" class="rounded" id="graphBackground"></div>
+            height: calc(1rem * 7.5); width: 2.75rem" class="rounded" id="graphBackground"></div>
 <div class="text-center">
     <div id="floatingInfo" class="row text-center">
         <!-- 음식점 정보 플로팅 위치 -->

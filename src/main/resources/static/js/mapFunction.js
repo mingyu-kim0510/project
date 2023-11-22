@@ -104,7 +104,7 @@ async function mapRender(result, mapOption, positions) {
         else if (item.congestion == "붐빔") var imageSrc = '/img/danger.png';
         else var imageSrc = '/img/default.png';
         // 마커 이미지 생성
-        var markerImage = new kakao.maps.MarkerImage(imageSrc, new kakao.maps.Size(18, 26));
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, new kakao.maps.Size(20, 31));
 
         marker = new kakao.maps.Marker({
             map: map, // 마커를 표시할 지도
@@ -163,6 +163,7 @@ async function mapRender(result, mapOption, positions) {
             const floatElement = $( ".float-info" )
             predGraph.style.bottom = `calc(${floatElement.prop( "scrollHeight" )}px + ${floatElement.css( "bottom" )} + 1rem)`
             graphBackground.style.bottom = `calc(${floatElement.prop( "scrollHeight" )}px + ${floatElement.css( "bottom" )} + 1rem)`
+
             predGraph.style.right = "1rem"
 
             predGraph.innerHTML = predictGraph(fetchResult);
