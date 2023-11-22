@@ -31,13 +31,4 @@ public class UserEntity extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<LikeEntity> likeEntityList = new ArrayList<>();
-
-    public UserDto toUserDto () {
-        return UserDto.builder()
-                .userIdx(userIdx)
-                .userId(userId)
-                .userPw(userPw)
-                .build();
-    }
-
 }

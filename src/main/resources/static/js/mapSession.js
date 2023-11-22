@@ -37,7 +37,6 @@ window.onload = async () => {
     const sessionDistrict = await fetch('/api/map/district',{ method: 'get' });
     const sessionResult = await sessionDistrict.json();
 
-    console.log(sessionResult);
     if (sessionResult.districtName != null && sessionResult.districtName !== "") {
         // 검색기능 수행 전 스피너
         spinner();
