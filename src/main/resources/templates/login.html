@@ -51,7 +51,7 @@
         <input type="text" class="form-control" name="userId" id="userId" style="transform: rotate(0.04deg)" />
     </div>
     <div class="form-group mb-5">
-        <label for="userPw" style="font-size: 1.2rem">비밀번호 입력</label>
+        <label for="userPw" style="font-size: 1.2rem">비밀번호</label>
         <input type="password" class="form-control" id="userPw" style="transform: rotate(0.04deg); font-family:'굴림';" />
     </div>
     <button type="button" id="sendBtn" class="btn btn-primary w-100 btn-lg fw-bold" style="border: none; background-color: #FFB7B1; transform: rotate(0.04deg)">로그인</button>
@@ -62,8 +62,12 @@
 <div class="modal fade" id="alertModal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true"></div>
 <script src="/js/alert.js"></script>
 </body>
+<script src="/js/mcore.min.js"></script>
 
 <script>
+    M.onBack( function(e) {
+        location.href='/main';
+    });
     const userId = document.getElementById('userId');
     const userPw = document.getElementById('userPw');
     const Btn = document.getElementById('sendBtn');

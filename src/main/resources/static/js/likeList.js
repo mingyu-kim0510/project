@@ -35,7 +35,7 @@ function render(result, isChecked) {
                         <span>
                             <div class="row fw-bold">
                                 <div class="col-5">
-                                    <a style="font-size: 0.9rem; margin-left: 0.4rem" onclick=" if(${isTempUrl}) {document.getElementById('framesrc').src='${item.storeUrl}'; $('#myModal').modal('show');}">${item.storeName}</a>
+                                    <a class='storeLink' style="font-size: 0.9rem; margin-left: 0.4rem" onclick=" if(${isTempUrl}) {document.getElementById('framesrc').src='${item.storeUrl}'; $('#myModal').modal('show');}">${item.storeName}</a>
                                 </div>
                                 <div class="col-auto" style="margin-left:auto; margin-right:.375rem">
                                     <div class="row">
@@ -48,7 +48,6 @@ function render(result, isChecked) {
                                             </a>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </span>

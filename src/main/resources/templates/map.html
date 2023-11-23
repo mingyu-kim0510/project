@@ -246,7 +246,7 @@
             autocomplete="off"
             data-name="아시아"
     />
-    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="option6">아시아</label>
+    <label class="btn btn-sm btn-light rounded-pill shadow-sm" style="width: 5rem; transform:rotate(0.04deg); font-weight: bold" for="option6">아시안</label>
     <input
             type="radio"
             class="btn-check scroll_control"
@@ -394,5 +394,11 @@
 <script src="/js/map.js"></script>
 <script src="/js/mapFunction.js"></script>
 <script src="/js/mcore.min.js"></script>
+<script>
+    M.onBack( function(e) {
+        $("#guideModal").modal('hide');
+        $("#myModal").modal('hide');
+    });
+</script>
 </body>
 </html>

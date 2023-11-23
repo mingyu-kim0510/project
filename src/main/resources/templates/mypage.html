@@ -83,7 +83,12 @@
 <!-- 모달 끝 -->
 <script src="/js/fetcher.js"></script>
 </body>
+<script src="/js/mcore.min.js"></script>
 <script>
+
+  M.onBack( function(e) {
+    window.history.back();
+  });
   const userName = document.getElementById('userName');
   const modifyBtn = document.getElementById('modifyBtn');
   const saveBtn = document.getElementById('saveBtn');

@@ -90,7 +90,11 @@
 <script src="/js/alert.js"></script>
 <div id="menuBar"></div>
 <script src="/js/menuBar.js"></script>
+<script src="/js/mcore.min.js"></script>
 <script>
+    M.onBack( function(e) {
+        location.href='/login';
+    });
 const o = document.getElementById('userPw');
 const re = document.getElementById('userPw2');
 const pw = document.getElementById('pwChecker');
